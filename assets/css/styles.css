@@ -249,10 +249,12 @@ p { margin: 0 0 1em; }
   font-weight: 500;
   font-size: var(--fs-xs);
 }
-.site-nav a:hover {
+.site-nav a:hover,
+.site-nav a.is-active {
   background: var(--color-primary-soft);
   color: var(--color-primary);
 }
+.site-nav a.is-active { font-weight: 600; }
 
 .header-actions {
   display: flex;
