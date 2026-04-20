@@ -295,7 +295,7 @@
         <header class="section-head">
           <p class="section-eyebrow" data-i18n="contact.eyebrow">Contacto</p>
           <h2 class="section-title" data-i18n="contact.title">¿Quieres conocernos?</h2>
-          <p class="section-lead" data-i18n="contact.lead">Déjanos un mensaje y te responderemos a la brevedad.</p>
+          <p class="section-lead" data-i18n="contact.lead">Solo deja un mensaje y te responderemos.</p>
         </header>
         <form class="contact-form" id="contact-form" novalidate>
           <div class="form-row">
@@ -305,6 +305,13 @@
           <div class="form-row">
             <label for="c-email" data-i18n="contact.email">Correo electrónico</label>
             <input type="email" id="c-email" name="email" required maxlength="120" autocomplete="email">
+          </div>
+          <div class="form-row">
+            <label for="c-whatsapp">
+              <span data-i18n="contact.whatsapp">WhatsApp</span>
+              <span class="label-optional" data-i18n="contact.optional">(opcional)</span>
+            </label>
+            <input type="tel" id="c-whatsapp" name="whatsapp" maxlength="20" autocomplete="tel" placeholder="+1 809 000 0000" pattern="^\+?[0-9 ()\-]{7,20}$">
           </div>
           <div class="form-row">
             <label for="c-interest" data-i18n="contact.interest">Interés</label>

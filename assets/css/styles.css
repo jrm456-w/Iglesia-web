@@ -863,6 +863,17 @@ p { margin: 0 0 1em; }
   font-weight: 600;
   color: var(--color-text);
   letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.label-optional {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--fs-xxs);
 }
 
 .form-row input,
