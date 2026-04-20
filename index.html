@@ -1,1 +1,308 @@
-<h1>Mi Iglesia</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Iglesia De Cristo Gazcue — comunidad cristiana no denominacional en Santo Domingo. Cultos presenciales y por Zoom.">
+  <meta name="theme-color" content="#9E1B32">
+
+  <meta property="og:title" content="Iglesia De Cristo Gazcue">
+  <meta property="og:description" content="Comunidad cristiana no denominacional en Gazcue, Santo Domingo, República Dominicana.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_DO">
+
+  <title>Iglesia De Cristo Gazcue</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap">
+
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="a11y.skip">Saltar al contenido</a>
+
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand" aria-label="Iglesia De Cristo Gazcue — Inicio">
+        <img src="assets/img/logo.png" alt="" class="brand-logo" onerror="this.classList.add('is-missing')">
+        <span class="brand-text">
+          <span class="brand-line">Iglesia De Cristo</span>
+          <span class="brand-sub">Gazcue</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="#inicio" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="#nosotros" data-i18n="nav.about">Nosotros</a></li>
+          <li><a href="#ministerios" data-i18n="nav.ministries">Ministerios</a></li>
+          <li><a href="#contenido" data-i18n="nav.content">Contenido</a></li>
+          <li><a href="#horarios" data-i18n="nav.schedule">Horarios</a></li>
+          <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-toggle" role="group" aria-label="Idioma">
+          <button type="button" class="lang-btn is-active" data-lang="es" aria-pressed="true">ES</button>
+          <span class="lang-sep" aria-hidden="true">|</span>
+          <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Abrir menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="inicio">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="container hero-content">
+        <p class="hero-eyebrow" data-i18n="hero.eyebrow">Bienvenidos</p>
+        <h1 class="hero-title" data-i18n="hero.title">Iglesia De Cristo Gazcue</h1>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">Una comunidad cristiana no denominacional en el corazón de Santo Domingo. Te invitamos a conocer a Cristo con nosotros.</p>
+        <div class="hero-cta">
+          <a href="https://us02web.zoom.us/j/2586060812" class="btn btn-primary" target="_blank" rel="noopener" data-i18n="hero.cta_zoom">Únete al culto por Zoom</a>
+          <a href="#horarios" class="btn btn-ghost" data-i18n="hero.cta_schedule">Ver horarios</a>
+        </div>
+        <div class="hero-chip" data-i18n="hero.next">Próximo culto · Domingo 9:00 AM</div>
+      </div>
+    </section>
+
+    <section class="section section-schedule" id="horarios">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="schedule.eyebrow">Horarios</p>
+          <h2 class="section-title" data-i18n="schedule.title">Nuestros cultos</h2>
+          <p class="section-lead" data-i18n="schedule.lead">Te esperamos presencial o conéctate con nosotros desde cualquier lugar por Zoom.</p>
+        </header>
+        <div class="schedule-grid">
+          <article class="schedule-card">
+            <p class="schedule-day" data-i18n="schedule.sunday.day">Domingo</p>
+            <p class="schedule-time">9:00 AM – 12:00 PM</p>
+            <p class="schedule-type" data-i18n="schedule.sunday.type">Culto general · Híbrido</p>
+            <a class="btn btn-primary btn-block" href="https://us02web.zoom.us/j/2586060812" target="_blank" rel="noopener" data-i18n="schedule.join_zoom">Entrar al Zoom</a>
+          </article>
+          <article class="schedule-card">
+            <p class="schedule-day" data-i18n="schedule.wednesday.day">Miércoles</p>
+            <p class="schedule-time" data-i18n="schedule.wednesday.time">Hora por confirmar</p>
+            <p class="schedule-type" data-i18n="schedule.wednesday.type">Estudio de doctrina</p>
+            <a class="btn btn-ghost btn-block" href="#contacto" data-i18n="schedule.more_info">Más información</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-about" id="nosotros">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="about.eyebrow">Quiénes somos</p>
+          <h2 class="section-title" data-i18n="about.title">Una familia en Cristo</h2>
+        </header>
+        <div class="about-grid">
+          <article class="about-card">
+            <h3 data-i18n="about.mission.title">Misión</h3>
+            <p data-i18n="about.mission.text">Proclamar el evangelio de Cristo y formar discípulos comprometidos con Su palabra. <em>(Contenido pendiente)</em></p>
+          </article>
+          <article class="about-card">
+            <h3 data-i18n="about.vision.title">Visión</h3>
+            <p data-i18n="about.vision.text">Ser una comunidad que transforma vidas y refleja el amor de Cristo en Gazcue y más allá. <em>(Contenido pendiente)</em></p>
+          </article>
+          <article class="about-card">
+            <h3 data-i18n="about.history.title">Historia</h3>
+            <p data-i18n="about.history.text">Nuestra historia como congregación en el corazón de Santo Domingo. <em>(Contenido pendiente)</em></p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-ministries" id="ministerios">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="ministries.eyebrow">Ministerios</p>
+          <h2 class="section-title" data-i18n="ministries.title">Encuentra tu lugar</h2>
+          <p class="section-lead" data-i18n="ministries.lead">Espacios para crecer, servir y conectar con otros según tu etapa de vida.</p>
+        </header>
+        <div class="ministry-grid">
+          <a href="ministerios/jovenes.html" class="ministry-card">
+            <h3 data-i18n="ministries.youth.title">Jóvenes</h3>
+            <p data-i18n="ministries.youth.text">Una comunidad vibrante para la nueva generación.</p>
+            <span class="card-link" data-i18n="ministries.see_more">Conocer más →</span>
+          </a>
+          <a href="ministerios/adultos.html" class="ministry-card">
+            <h3 data-i18n="ministries.adults.title">Adultos</h3>
+            <p data-i18n="ministries.adults.text">Discipulado, familia y crecimiento espiritual.</p>
+            <span class="card-link" data-i18n="ministries.see_more">Conocer más →</span>
+          </a>
+          <article class="ministry-card ministry-card-placeholder">
+            <h3 data-i18n="ministries.more.title">Más ministerios</h3>
+            <p data-i18n="ministries.more.text">Próximamente: niños, matrimonios, alabanza y más.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-content" id="contenido">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="content.eyebrow">Contenido</p>
+          <h2 class="section-title" data-i18n="content.title">Reflexiones, podcast y más</h2>
+        </header>
+        <div class="tabs" role="tablist">
+          <button class="tab is-active" role="tab" aria-selected="true" data-tab="reflexiones" data-i18n="content.tabs.reflections">Reflexiones</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="podcast" data-i18n="content.tabs.podcast">Podcast</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="videos" data-i18n="content.tabs.videos">Videos</button>
+        </div>
+        <div class="tab-panels">
+          <div class="tab-panel is-active" id="panel-reflexiones" role="tabpanel">
+            <p class="panel-lead" data-i18n="content.reflections.text">Reflexiones cortas desde nuestras redes sociales.</p>
+            <div class="media-grid" aria-label="Reflexiones">
+              <div class="media-card placeholder-media"><span>Reflexión #1</span></div>
+              <div class="media-card placeholder-media"><span>Reflexión #2</span></div>
+              <div class="media-card placeholder-media"><span>Reflexión #3</span></div>
+            </div>
+          </div>
+          <div class="tab-panel" id="panel-podcast" role="tabpanel" hidden>
+            <p class="panel-lead" data-i18n="content.podcast.text">Nuestro podcast está disponible en YouTube.</p>
+            <a class="btn btn-primary" href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener" data-i18n="content.podcast.cta">Abrir en YouTube</a>
+          </div>
+          <div class="tab-panel" id="panel-videos" role="tabpanel" hidden>
+            <p class="panel-lead" data-i18n="content.videos.text">Explora nuestros videos más recientes.</p>
+            <a class="btn btn-primary" href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener" data-i18n="content.videos.cta">Ver en YouTube</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-leaders" id="lideres">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="leaders.eyebrow">Equipo</p>
+          <h2 class="section-title" data-i18n="leaders.title">Nuestros líderes</h2>
+          <p class="section-lead" data-i18n="leaders.lead">Próximamente conocerás al equipo pastoral y de liderazgo.</p>
+        </header>
+        <div class="leader-grid">
+          <article class="leader-card">
+            <div class="leader-photo placeholder-photo" aria-hidden="true"></div>
+            <h3 data-i18n="leaders.pastor.name">Pastor principal</h3>
+            <p data-i18n="leaders.pastor.role">Pastor</p>
+          </article>
+          <article class="leader-card">
+            <div class="leader-photo placeholder-photo" aria-hidden="true"></div>
+            <h3 data-i18n="leaders.copastor.name">Líder</h3>
+            <p data-i18n="leaders.copastor.role">Ministerio</p>
+          </article>
+          <article class="leader-card">
+            <div class="leader-photo placeholder-photo" aria-hidden="true"></div>
+            <h3 data-i18n="leaders.leader.name">Líder</h3>
+            <p data-i18n="leaders.leader.role">Ministerio</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-location" id="ubicacion">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="location.eyebrow">Ubicación</p>
+          <h2 class="section-title" data-i18n="location.title">Visítanos</h2>
+        </header>
+        <div class="location-grid">
+          <div class="location-info">
+            <p class="location-address">
+              <strong>Calle Caonabo #6</strong><br>
+              Gazcue, Santo Domingo<br>
+              <span data-i18n="location.country">República Dominicana</span>
+            </p>
+            <a class="btn btn-ghost" href="https://maps.google.com/?q=Calle+Caonabo+6+Gazcue+Santo+Domingo" target="_blank" rel="noopener" data-i18n="location.directions">Cómo llegar</a>
+          </div>
+          <div class="location-map">
+            <iframe
+              title="Mapa de Iglesia De Cristo Gazcue"
+              src="https://www.google.com/maps?q=Calle+Caonabo+6+Gazcue+Santo+Domingo&output=embed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-contact" id="contacto">
+      <div class="container contact-wrap">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="contact.eyebrow">Contacto</p>
+          <h2 class="section-title" data-i18n="contact.title">¿Quieres conocernos?</h2>
+          <p class="section-lead" data-i18n="contact.lead">Déjanos un mensaje y te responderemos a la brevedad.</p>
+        </header>
+        <form class="contact-form" id="contact-form" novalidate>
+          <div class="form-row">
+            <label for="c-name" data-i18n="contact.name">Nombre</label>
+            <input type="text" id="c-name" name="name" required maxlength="80" autocomplete="name">
+          </div>
+          <div class="form-row">
+            <label for="c-email" data-i18n="contact.email">Correo electrónico</label>
+            <input type="email" id="c-email" name="email" required maxlength="120" autocomplete="email">
+          </div>
+          <div class="form-row">
+            <label for="c-interest" data-i18n="contact.interest">Interés</label>
+            <select id="c-interest" name="interest" required>
+              <option value="" data-i18n="contact.interests.choose">Selecciona una opción</option>
+              <option value="visitar" data-i18n="contact.interests.visit">Quiero visitar</option>
+              <option value="miembro" data-i18n="contact.interests.member">Ser miembro</option>
+              <option value="oracion" data-i18n="contact.interests.prayer">Petición de oración</option>
+              <option value="otro" data-i18n="contact.interests.other">Otro</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="c-message" data-i18n="contact.message">Mensaje</label>
+            <textarea id="c-message" name="message" rows="5" maxlength="1000" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="contact.send">Enviar mensaje</button>
+          <p class="form-note" data-i18n="contact.note">Tus datos se usarán solo para responder tu solicitud.</p>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-text">
+          <span class="brand-line">Iglesia De Cristo</span>
+          <span class="brand-sub">Gazcue</span>
+        </span>
+        <p data-i18n="footer.tagline">Comunidad cristiana no denominacional</p>
+      </div>
+      <nav class="footer-nav" aria-label="Pie de página">
+        <h4 data-i18n="footer.nav_title">Navegación</h4>
+        <ul>
+          <li><a href="#inicio" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="#nosotros" data-i18n="nav.about">Nosotros</a></li>
+          <li><a href="#ministerios" data-i18n="nav.ministries">Ministerios</a></li>
+          <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="footer-social">
+        <h4 data-i18n="footer.social_title">Síguenos</h4>
+        <ul class="social-list">
+          <li><a href="https://www.facebook.com/idcgazcue/" target="_blank" rel="noopener" aria-label="Facebook">Facebook</a></li>
+          <li><a href="https://www.instagram.com/idcgazcue/" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a></li>
+          <li><a href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener" aria-label="YouTube">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© <span id="year">2026</span> Iglesia De Cristo Gazcue</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
