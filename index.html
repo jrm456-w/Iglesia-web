@@ -38,6 +38,7 @@
           <li><a href="#nosotros" data-i18n="nav.about">Nosotros</a></li>
           <li><a href="#ministerios" data-i18n="nav.ministries">Ministerios</a></li>
           <li><a href="#contenido" data-i18n="nav.content">Contenido</a></li>
+          <li><a href="#preguntas" data-i18n="nav.faq">Preguntas</a></li>
           <li><a href="#horarios" data-i18n="nav.schedule">Horarios</a></li>
           <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
         </ul>
@@ -200,6 +201,67 @@
             <p data-i18n="leaders.more.role">Próximamente</p>
           </article>
         </div>
+      </div>
+    </section>
+
+    <section class="section section-faq" id="preguntas">
+      <div class="container faq-wrap">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="faq.eyebrow">Preguntas</p>
+          <h2 class="section-title" data-i18n="faq.title">¿Tienes una pregunta?</h2>
+          <p class="section-lead" data-i18n="faq.lead">Estamos aquí para acompañarte. Pregúntanos lo que quieras sobre la fe, la Biblia o nuestra iglesia y te responderemos personalmente.</p>
+        </header>
+
+        <div class="faq-examples" aria-label="Preguntas frecuentes">
+          <p class="faq-examples-label" data-i18n="faq.examples_label">Algunas preguntas frecuentes:</p>
+          <div class="faq-chips">
+            <button type="button" class="faq-chip" data-question="¿Quién fue Jesús y por qué es importante?" data-i18n="faq.q1">¿Quién fue Jesús?</button>
+            <button type="button" class="faq-chip" data-question="¿Por qué debería seguir a Jesús?" data-i18n="faq.q2">¿Por qué seguirlo?</button>
+            <button type="button" class="faq-chip" data-question="¿Qué debo hacer para ser cristiano?" data-i18n="faq.q3">¿Cómo ser cristiano?</button>
+            <button type="button" class="faq-chip" data-question="¿Qué creen ustedes como iglesia?" data-i18n="faq.q4">¿Qué creen aquí?</button>
+            <button type="button" class="faq-chip" data-question="Me gustaría saber más sobre los cultos y cómo visitarlos." data-i18n="faq.q5">¿Cómo visitarlos?</button>
+          </div>
+        </div>
+
+        <form class="faq-form" id="faq-form" novalidate>
+          <div class="form-row">
+            <label for="q-name" data-i18n="faq.name">Tu nombre</label>
+            <input type="text" id="q-name" name="name" required maxlength="80" autocomplete="name">
+          </div>
+
+          <div class="form-row">
+            <label for="q-question" data-i18n="faq.question">Tu pregunta</label>
+            <textarea id="q-question" name="question" rows="5" maxlength="1000" required></textarea>
+          </div>
+
+          <fieldset class="form-row form-row-radio">
+            <legend data-i18n="faq.contact_method">¿Cómo prefieres que te respondamos?</legend>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="contactMethod" value="email" checked>
+                <span data-i18n="faq.method_email">Correo electrónico</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="contactMethod" value="whatsapp">
+                <span data-i18n="faq.method_whatsapp">WhatsApp</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="form-row contact-field" data-method="email">
+            <label for="q-email" data-i18n="faq.email">Tu correo electrónico</label>
+            <input type="email" id="q-email" name="email" maxlength="120" autocomplete="email" required>
+          </div>
+
+          <div class="form-row contact-field" data-method="whatsapp" hidden>
+            <label for="q-phone" data-i18n="faq.phone">Tu WhatsApp (con código de país)</label>
+            <input type="tel" id="q-phone" name="phone" maxlength="20" autocomplete="tel" placeholder="+1 809 000 0000" pattern="^\+?[0-9 ()\-]{7,20}$">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="faq.send">Enviar pregunta</button>
+          <p class="form-note" data-i18n="faq.note">Tus datos solo se usarán para responder tu pregunta. Sin spam, sin compartir.</p>
+          <p class="form-status" id="faq-status" role="status" aria-live="polite"></p>
+        </form>
       </div>
     </section>
 
