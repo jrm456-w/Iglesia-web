@@ -1026,6 +1026,16 @@ p { margin: 0 0 1em; }
 
 .contact-field[hidden] { display: none; }
 
+/* Honeypot anti-spam: fuera de viewport, oculto a usuarios reales */
+.hp {
+  position: absolute !important;
+  left: -10000px !important;
+  top: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
 /* -------- 8. Responsive (mobile-first ajustes) -------- */
 @media (max-width: 960px) {
   .site-nav {

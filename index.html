@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Iglesia De Cristo Gazcue — comunidad cristiana no denominacional en Santo Domingo. Cultos presenciales y por Zoom.">
   <meta name="theme-color" content="#9E1B32">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.google.com; form-action 'self' mailto:; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+  <meta name="robots" content="noindex, nofollow">
 
   <meta property="og:title" content="Iglesia De Cristo Gazcue">
   <meta property="og:description" content="Comunidad cristiana no denominacional en Gazcue, Santo Domingo, República Dominicana.">
@@ -25,7 +28,7 @@
   <header class="site-header" id="site-header">
     <div class="container header-inner">
       <a href="#inicio" class="brand" aria-label="Iglesia De Cristo Gazcue — Inicio">
-        <img src="assets/img/logo.png" alt="" class="brand-logo" onerror="this.classList.add('is-missing')">
+        <img src="assets/img/logo.png" alt="" class="brand-logo" id="brand-logo">
         <span class="brand-text">
           <span class="brand-line">Iglesia De Cristo</span>
           <span class="brand-sub">Gazcue</span>
@@ -65,7 +68,7 @@
         <p class="hero-eyebrow" data-i18n="hero.eyebrow">Bienvenidos</p>
         <h1 class="hero-title" data-i18n="hero.title">Iglesia De Cristo Gazcue</h1>
         <div class="hero-cta">
-          <a href="https://us02web.zoom.us/j/2586060812" class="btn btn-primary" target="_blank" rel="noopener" data-i18n="hero.cta_zoom">Únete al culto por Zoom</a>
+          <a href="https://us02web.zoom.us/j/2586060812" class="btn btn-primary" target="_blank" rel="noopener noreferrer" data-i18n="hero.cta_zoom">Únete al culto por Zoom</a>
           <a href="#horarios" class="btn btn-ghost" data-i18n="hero.cta_schedule">Ver horarios</a>
         </div>
         <div class="hero-chip" data-i18n="hero.next">Próximo culto · Domingo 9:00 AM</div>
@@ -84,7 +87,7 @@
             <p class="schedule-day" data-i18n="schedule.sunday.day">Domingo</p>
             <p class="schedule-time">9:00 AM – 12:00 PM</p>
             <p class="schedule-type" data-i18n="schedule.sunday.type">Culto general · Híbrido</p>
-            <a class="btn btn-primary btn-block" href="https://us02web.zoom.us/j/2586060812" target="_blank" rel="noopener" data-i18n="schedule.join_zoom">Entrar al Zoom</a>
+            <a class="btn btn-primary btn-block" href="https://us02web.zoom.us/j/2586060812" target="_blank" rel="noopener noreferrer" data-i18n="schedule.join_zoom">Entrar al Zoom</a>
           </article>
           <article class="schedule-card">
             <p class="schedule-day" data-i18n="schedule.wednesday.day">Miércoles</p>
@@ -167,11 +170,11 @@
           </div>
           <div class="tab-panel" id="panel-podcast" role="tabpanel" hidden>
             <p class="panel-lead" data-i18n="content.podcast.text">Nuestro podcast está disponible en YouTube.</p>
-            <a class="btn btn-primary" href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener" data-i18n="content.podcast.cta">Abrir en YouTube</a>
+            <a class="btn btn-primary" href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener noreferrer" data-i18n="content.podcast.cta">Abrir en YouTube</a>
           </div>
           <div class="tab-panel" id="panel-videos" role="tabpanel" hidden>
             <p class="panel-lead" data-i18n="content.videos.text">Explora nuestros videos más recientes.</p>
-            <a class="btn btn-primary" href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener" data-i18n="content.videos.cta">Ver en YouTube</a>
+            <a class="btn btn-primary" href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener noreferrer" data-i18n="content.videos.cta">Ver en YouTube</a>
           </div>
         </div>
       </div>
@@ -222,6 +225,10 @@
         </div>
 
         <form class="faq-form" id="faq-form" novalidate>
+          <div class="hp" aria-hidden="true">
+            <label for="q-website">No completar</label>
+            <input type="text" id="q-website" name="website" tabindex="-1" autocomplete="off">
+          </div>
           <div class="form-row">
             <label for="q-name" data-i18n="faq.name">Tu nombre</label>
             <input type="text" id="q-name" name="name" required maxlength="80" autocomplete="name">
@@ -276,7 +283,7 @@
               Gazcue, Santo Domingo<br>
               <span data-i18n="location.country">República Dominicana</span>
             </p>
-            <a class="btn btn-ghost" href="https://maps.google.com/?q=Calle+Caonabo+6+Gazcue+Santo+Domingo" target="_blank" rel="noopener" data-i18n="location.directions">Cómo llegar</a>
+            <a class="btn btn-ghost" href="https://maps.google.com/?q=Calle+Caonabo+6+Gazcue+Santo+Domingo" target="_blank" rel="noopener noreferrer" data-i18n="location.directions">Cómo llegar</a>
           </div>
           <div class="location-map">
             <iframe
@@ -298,6 +305,10 @@
           <p class="section-lead" data-i18n="contact.lead">Solo deja un mensaje y te responderemos.</p>
         </header>
         <form class="contact-form" id="contact-form" novalidate>
+          <div class="hp" aria-hidden="true">
+            <label for="c-website">No completar</label>
+            <input type="text" id="c-website" name="website" tabindex="-1" autocomplete="off">
+          </div>
           <div class="form-row">
             <label for="c-name" data-i18n="contact.name">Nombre</label>
             <input type="text" id="c-name" name="name" required maxlength="80" autocomplete="name">
@@ -356,9 +367,9 @@
       <div class="footer-social">
         <h4 data-i18n="footer.social_title">Síguenos</h4>
         <ul class="social-list">
-          <li><a href="https://www.facebook.com/idcgazcue/" target="_blank" rel="noopener" aria-label="Facebook">Facebook</a></li>
-          <li><a href="https://www.instagram.com/idcgazcue/" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a></li>
-          <li><a href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener" aria-label="YouTube">YouTube</a></li>
+          <li><a href="https://www.facebook.com/idcgazcue/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">Facebook</a></li>
+          <li><a href="https://www.instagram.com/idcgazcue/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a></li>
+          <li><a href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener noreferrer" aria-label="YouTube">YouTube</a></li>
         </ul>
       </div>
     </div>

@@ -14,13 +14,50 @@
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const PHONE_RE = /^\+?[0-9 ()\-]{7,20}$/;
 
+  // Caps duros de longitud: previenen abusos aunque se manipule el atributo
+  // maxlength desde DevTools.
+  const MAX = {
+    name: 80,
+    email: 120,
+    phone: 20,
+    message: 1000,
+    question: 1000,
+    subject: 120,
+    mailto: 8000
+  };
+
+  // Strip caracteres de control (0x00-0x1F + DEL).
+  // Variante NO_LF preserva el line feed para mantener párrafos en el body.
+  const CTRL_ALL = new RegExp("[\\u0000-\\u001F\\u007F]", "g");
+  const CTRL_NO_LF = new RegExp("[\\u0000-\\u0009\\u000B-\\u001F\\u007F]", "g");
+
+  const sanitizeHeader = (s) =>
+    String(s).replace(CTRL_ALL, " ").replace(/\s+/g, " ").trim().slice(0, MAX.subject);
+
+  const sanitizeBody = (s) =>
+    String(s).replace(CTRL_NO_LF, "");
+
   const setInvalid = (input, isInvalid) => {
     if (isInvalid) input.setAttribute("aria-invalid", "true");
     else input.removeAttribute("aria-invalid");
   };
 
-  const buildMailto = (subject, body) =>
-    `mailto:${TARGET_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const buildMailto = (subject, body) => {
+    const url = `mailto:${TARGET_EMAIL}?subject=${encodeURIComponent(sanitizeHeader(subject))}&body=${encodeURIComponent(sanitizeBody(body))}`;
+    return url.length > MAX.mailto ? url.slice(0, MAX.mailto) : url;
+  };
+
+  // Honeypot: si el campo trampa fue llenado, asumimos bot.
+  const isBot = (form) => {
+    const hp = form.querySelector('input[name="website"]');
+    return hp && hp.value !== "";
+  };
+
+  /* -------- Reemplazo del logo si la imagen no carga -------- */
+  const logo = document.getElementById("brand-logo");
+  if (logo) {
+    logo.addEventListener("error", () => logo.classList.add("is-missing"), { once: true });
+  }
 
   /* -------- Año dinámico en el footer -------- */
   const yearEl = document.getElementById("year");
@@ -95,7 +132,7 @@
 
     document.querySelectorAll(".faq-chip").forEach((chip) => {
       chip.addEventListener("click", () => {
-        const text = chip.dataset.question || chip.textContent.trim();
+        const text = (chip.dataset.question || chip.textContent).trim().slice(0, MAX.question);
         questionField.value = text;
         questionField.focus();
         questionField.setSelectionRange(text.length, text.length);
@@ -119,32 +156,40 @@
       e.preventDefault();
       if (submitBtn.disabled) return;
 
+      // Honeypot: si bot, fingimos éxito sin enviar nada.
+      if (isBot(faqForm)) {
+        statusEl.className = "form-status is-success";
+        statusEl.textContent = "Gracias, recibimos tu mensaje.";
+        return;
+      }
+
       statusEl.className = "form-status";
       statusEl.textContent = "";
 
       const data = new FormData(faqForm);
-      const name = (data.get("name") || "").toString().trim();
-      const question = (data.get("question") || "").toString().trim();
+      const name = (data.get("name") || "").toString().trim().slice(0, MAX.name);
+      const question = (data.get("question") || "").toString().trim().slice(0, MAX.question);
       const method = (data.get("contactMethod") || "email").toString();
       const contactValue = method === "email"
-        ? (data.get("email") || "").toString().trim()
-        : (data.get("phone") || "").toString().trim();
+        ? (data.get("email") || "").toString().trim().slice(0, MAX.email)
+        : (data.get("phone") || "").toString().trim().slice(0, MAX.phone);
 
       const errors = [];
-      const isNameOk = name.length >= 2 && name.length <= 80;
+
+      const isNameOk = name.length >= 2 && name.length <= MAX.name;
       setInvalid(nameInput, !isNameOk);
       if (!isNameOk) errors.push("nombre");
 
-      const isQuestionOk = question.length >= 5;
+      const isQuestionOk = question.length >= 5 && question.length <= MAX.question;
       setInvalid(questionField, !isQuestionOk);
       if (!isQuestionOk) errors.push("pregunta");
 
       if (method === "email") {
-        const emailOk = EMAIL_RE.test(contactValue);
+        const emailOk = contactValue.length <= MAX.email && EMAIL_RE.test(contactValue);
         setInvalid(emailField, !emailOk);
         if (!emailOk) errors.push("correo");
       } else {
-        const phoneOk = PHONE_RE.test(contactValue);
+        const phoneOk = contactValue.length <= MAX.phone && PHONE_RE.test(contactValue);
         setInvalid(phoneField, !phoneOk);
         if (!phoneOk) errors.push("WhatsApp");
       }
@@ -190,27 +235,32 @@
       e.preventDefault();
       if (submitBtn.disabled) return;
 
+      if (isBot(contactForm)) {
+        statusEl.className = "form-status is-success";
+        statusEl.textContent = "Gracias, recibimos tu mensaje.";
+        return;
+      }
+
       statusEl.className = "form-status";
       statusEl.textContent = "";
 
-      const name = nameInput.value.trim();
-      const email = emailInput.value.trim();
-      const whatsapp = whatsappInput.value.trim();
+      const name = nameInput.value.trim().slice(0, MAX.name);
+      const email = emailInput.value.trim().slice(0, MAX.email);
+      const whatsapp = whatsappInput.value.trim().slice(0, MAX.phone);
       const interest = interestInput.value;
-      const message = messageInput.value.trim();
+      const message = messageInput.value.trim().slice(0, MAX.message);
 
       const errors = [];
 
-      const isNameOk = name.length >= 2 && name.length <= 80;
+      const isNameOk = name.length >= 2 && name.length <= MAX.name;
       setInvalid(nameInput, !isNameOk);
       if (!isNameOk) errors.push("nombre");
 
-      const isEmailOk = EMAIL_RE.test(email);
+      const isEmailOk = email.length <= MAX.email && EMAIL_RE.test(email);
       setInvalid(emailInput, !isEmailOk);
       if (!isEmailOk) errors.push("correo");
 
-      // WhatsApp es opcional: solo valida si el usuario escribió algo
-      const isWhatsappOk = !whatsapp || PHONE_RE.test(whatsapp);
+      const isWhatsappOk = !whatsapp || (whatsapp.length <= MAX.phone && PHONE_RE.test(whatsapp));
       setInvalid(whatsappInput, !isWhatsappOk);
       if (!isWhatsappOk) errors.push("WhatsApp");
 
@@ -218,7 +268,7 @@
       setInvalid(interestInput, !isInterestOk);
       if (!isInterestOk) errors.push("interés");
 
-      const isMessageOk = message.length >= 5;
+      const isMessageOk = message.length >= 5 && message.length <= MAX.message;
       setInvalid(messageInput, !isMessageOk);
       if (!isMessageOk) errors.push("mensaje");
 
@@ -240,7 +290,7 @@
         `Nombre: ${name}`,
         `Correo: ${email}`,
         whatsapp ? `WhatsApp: ${whatsapp}` : null,
-        `Interés: ${interestLabels[interest] || interest}`,
+        `Interés: ${interestLabels[interest] || "Otro"}`,
         ``,
         `Mensaje:`,
         message
