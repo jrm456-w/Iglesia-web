@@ -8,8 +8,8 @@
 (function () {
   "use strict";
 
-  // Correo destino temporal — reemplazar al confirmar el correo oficial.
-  const TARGET_EMAIL = "contacto@idcgazcue.org";
+  // Correo oficial de la Iglesia De Cristo Gazcue.
+  const TARGET_EMAIL = "idcengazcue@gmail.com";
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const PHONE_RE = /^\+?[0-9 ()\-]{7,20}$/;

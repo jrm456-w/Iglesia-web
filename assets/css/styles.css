@@ -669,6 +669,25 @@ p { margin: 0 0 1em; }
 }
 .ministry-card:hover .card-link { transform: translateX(4px); }
 
+.card-leader {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  font-size: var(--fs-xxs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.ministry-card-feature {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-color: transparent;
+  color: var(--color-white);
+}
+.ministry-card-feature h3 { color: var(--color-white); }
+.ministry-card-feature p { color: rgba(255, 255, 255, 0.9); }
+
 .ministry-card-placeholder {
   background: transparent;
   border-style: dashed;
@@ -785,12 +804,19 @@ p { margin: 0 0 1em; }
   font-size: var(--fs-md);
   margin-bottom: 0.25rem;
 }
-.leader-card p {
+.leader-card p { margin: 0; }
+.leader-role {
+  color: var(--color-primary);
+  font-size: var(--fs-xxs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.leader-area {
   color: var(--color-text-muted);
   font-size: var(--fs-xs);
-  margin: 0;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  margin-top: 0.25rem !important;
+  line-height: 1.4;
 }
 
 /* -------- 14. Sección: Ubicación -------- */
