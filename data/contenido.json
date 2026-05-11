@@ -1,0 +1,41 @@
+{
+  "lectura": {
+    "versiculo_es": "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.",
+    "versiculo_en": "For God so loved the world that he gave his only Son, that whoever believes in him should not perish but have eternal life.",
+    "referencia": "Juan 3:16 / John 3:16",
+    "reflexion_es": "El amor de Dios es la raíz de la fe cristiana. No esperó a que fuéramos perfectos para enviar a su Hijo; lo envió cuando todavía estábamos lejos. Este versículo nos recuerda que la salvación es un regalo, no un mérito.",
+    "reflexion_en": "God's love is the root of the Christian faith. He did not wait for us to be perfect to send His Son; He sent Him while we were still far away. This verse reminds us that salvation is a gift, not a reward."
+  },
+  "anuncios": [
+    {
+      "id": "1",
+      "tipo": "evento",
+      "titulo_es": "Retiro de jóvenes",
+      "titulo_en": "Youth retreat",
+      "descripcion_es": "Fin de semana de crecimiento espiritual para jóvenes de 12 a 24 años.",
+      "descripcion_en": "Weekend of spiritual growth for youth ages 12 to 24.",
+      "fecha": "2026-02-15",
+      "activo": true
+    },
+    {
+      "id": "2",
+      "tipo": "semanal",
+      "titulo_es": "Estudio bíblico especial",
+      "titulo_en": "Special Bible study",
+      "descripcion_es": "Este miércoles estudiaremos el Sermón del Monte.",
+      "descripcion_en": "This Wednesday we study the Sermon on the Mount.",
+      "fecha": "2026-05-13",
+      "activo": true
+    },
+    {
+      "id": "3",
+      "tipo": "mensual",
+      "titulo_es": "Día de ayuno congregacional",
+      "titulo_en": "Congregational fasting day",
+      "descripcion_es": "Primer sábado del mes. Unidos en oración y ayuno.",
+      "descripcion_en": "First Saturday of the month. United in prayer and fasting.",
+      "fecha": "2026-06-06",
+      "activo": true
+    }
+  ]
+}
