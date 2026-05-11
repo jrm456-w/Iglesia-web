@@ -6,7 +6,7 @@
   <meta name="description" content="Iglesia De Cristo Gazcue — comunidad cristiana no denominacional en Santo Domingo. Cultos presenciales y por Zoom.">
   <meta name="theme-color" content="#9E1B32">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.google.com; form-action 'self' mailto:; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://identity.netlify.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.gravatar.com; frame-src https://www.google.com; connect-src 'self' https://api.github.com https://identity.netlify.com; form-action 'self' mailto:; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
   <meta name="robots" content="noindex, nofollow">
 
   <meta property="og:title" content="Iglesia De Cristo Gazcue">
@@ -95,6 +95,29 @@
             <p class="schedule-time">7:00 PM – 8:00 PM</p>
             <p class="schedule-type" data-i18n="schedule.wednesday.type">Estudio bíblico</p>
             <a class="btn btn-ghost btn-block" href="#contacto" data-i18n="schedule.more_info">Más información</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-bulletin" id="boletin">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="bulletin.eyebrow">Esta semana</p>
+          <h2 class="section-title" data-i18n="bulletin.title">Vida de la iglesia</h2>
+        </header>
+        <div class="bulletin-grid">
+          <article class="bulletin-card bulletin-card-reading" id="bulletin-reading" hidden>
+            <h3 class="bulletin-card-title" data-i18n="bulletin.reading">Lectura de la semana</h3>
+            <div class="reading-card" id="reading-card"></div>
+          </article>
+          <article class="bulletin-card bulletin-card-announcements" id="bulletin-announcements" hidden>
+            <h3 class="bulletin-card-title" data-i18n="bulletin.announcements">Próximos anuncios</h3>
+            <div class="announcement-list" id="announcement-grid"></div>
+          </article>
+          <article class="bulletin-card bulletin-card-birthdays" id="bulletin-birthdays" hidden>
+            <h3 class="bulletin-card-title" data-i18n="bulletin.birthdays">Cumpleaños del mes</h3>
+            <ul class="birthday-list" id="birthday-list"></ul>
           </article>
         </div>
       </div>
@@ -307,5 +330,8 @@
 
   <script src="assets/js/i18n.js" defer></script>
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/contenido.js" defer></script>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="assets/js/identity-init.js" defer></script>
 </body>
 </html>

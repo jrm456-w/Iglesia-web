@@ -1,0 +1,73 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: assets/img/uploads
+public_folder: /assets/img/uploads
+locale: es
+
+# Los archivos se guardan como JSON para que assets/js/contenido.js los
+# consuma directamente sin necesidad de parsear YAML frontmatter.
+collections:
+
+  - name: anuncios
+    label: Anuncios y Eventos
+    folder: data/anuncios
+    extension: json
+    format: json
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Título, name: titulo_es, widget: string }
+      - { label: Title (English), name: titulo_en, widget: string }
+      - { label: Descripción, name: descripcion_es, widget: text }
+      - { label: Description (English), name: descripcion_en, widget: text }
+      - label: Tipo
+        name: tipo
+        widget: select
+        options:
+          - { label: Semanal, value: semanal }
+          - { label: Mensual, value: mensual }
+          - { label: Evento especial, value: evento }
+      - { label: Fecha, name: fecha, widget: datetime, format: YYYY-MM-DD }
+      - { label: Imagen (opcional), name: imagen, widget: image, required: false }
+      - { label: Activo, name: activo, widget: boolean, default: true }
+
+  - name: cumpleanos
+    label: Cumpleaños del mes
+    folder: data/cumpleanos
+    extension: json
+    format: json
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Nombre, name: nombre, widget: string }
+      - { label: Fecha (día/mes), name: fecha, widget: string, hint: "Ejemplo: 15 de enero" }
+      - { label: Foto (opcional), name: foto, widget: image, required: false }
+
+  - name: oracion
+    label: Necesidades de Oración
+    folder: data/oracion
+    extension: json
+    format: json
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Necesidad, name: necesidad_es, widget: text }
+      - { label: Need (English), name: necesidad_en, widget: text }
+      - { label: Activo, name: activo, widget: boolean, default: true }
+
+  - name: lectura
+    label: Lectura de la Semana
+    folder: data/lectura
+    extension: json
+    format: json
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Versículo (español), name: versiculo_es, widget: text }
+      - { label: Verse (English), name: versiculo_en, widget: text }
+      - { label: Referencia, name: referencia, widget: string, hint: "Ejemplo: Juan 3:16" }
+      - { label: Reflexión (español), name: reflexion_es, widget: text }
+      - { label: Reflection (English), name: reflexion_en, widget: text }
+      - { label: Activo, name: activo, widget: boolean, default: true }
