@@ -192,8 +192,8 @@
   if (contactForm) {
     const nameInput = contactForm.querySelector("#c-name");
     const emailInput = contactForm.querySelector("#c-email");
-    const whatsappInput = contactForm.querySelector("#c-whatsapp");
-    const interestInput = contactForm.querySelector("#c-interest");
+    const whatsappInput = contactForm.querySelector("#c-whatsapp");   // puede no existir (form simplificado)
+    const interestInput = contactForm.querySelector("#c-interest");   // puede no existir
     const messageInput = contactForm.querySelector("#c-message");
     const statusEl = document.getElementById("form-status");
     const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -213,8 +213,8 @@
 
       const name = nameInput.value.trim().slice(0, MAX.name);
       const email = emailInput.value.trim().slice(0, MAX.email);
-      const whatsapp = whatsappInput.value.trim().slice(0, MAX.phone);
-      const interest = interestInput.value;
+      const whatsapp = whatsappInput ? whatsappInput.value.trim().slice(0, MAX.phone) : "";
+      const interest = interestInput ? interestInput.value : "";
       const message = messageInput.value.trim().slice(0, MAX.message);
 
       const errors = [];
@@ -227,13 +227,17 @@
       setInvalid(emailInput, !isEmailOk);
       if (!isEmailOk) errors.push("correo");
 
-      const isWhatsappOk = !whatsapp || (whatsapp.length <= MAX.phone && PHONE_RE.test(whatsapp));
-      setInvalid(whatsappInput, !isWhatsappOk);
-      if (!isWhatsappOk) errors.push("WhatsApp");
+      if (whatsappInput) {
+        const isWhatsappOk = !whatsapp || (whatsapp.length <= MAX.phone && PHONE_RE.test(whatsapp));
+        setInvalid(whatsappInput, !isWhatsappOk);
+        if (!isWhatsappOk) errors.push("WhatsApp");
+      }
 
-      const isInterestOk = Boolean(interest);
-      setInvalid(interestInput, !isInterestOk);
-      if (!isInterestOk) errors.push("interés");
+      if (interestInput) {
+        const isInterestOk = Boolean(interest);
+        setInvalid(interestInput, !isInterestOk);
+        if (!isInterestOk) errors.push("interés");
+      }
 
       const isMessageOk = message.length >= 5 && message.length <= MAX.message;
       setInvalid(messageInput, !isMessageOk);
@@ -257,7 +261,7 @@
         `Nombre: ${name}`,
         `Correo: ${email}`,
         whatsapp ? `WhatsApp: ${whatsapp}` : null,
-        `Interés: ${interestLabels[interest] || "Otro"}`,
+        interest ? `Interés: ${interestLabels[interest] || "Otro"}` : null,
         ``,
         `Mensaje:`,
         message
@@ -343,11 +347,12 @@
     });
   }
 
-  /* -------- Scroll spy: resalta el enlace activo del menú -------- */
+  /* -------- Scroll spy: solo aplica en index.html (donde existe #horarios) -------- */
   const sections = document.querySelectorAll("main section[id]");
   const navLinks = Array.from(document.querySelectorAll('.site-nav a[href^="#"]'));
+  const isIndexPage = !!document.querySelector("#horarios");
 
-  if (sections.length && navLinks.length && "IntersectionObserver" in window) {
+  if (isIndexPage && sections.length && navLinks.length && "IntersectionObserver" in window) {
     const linkFor = (id) => navLinks.find((a) => a.getAttribute("href") === `#${id}`);
 
     const observer = new IntersectionObserver((entries) => {

@@ -1165,6 +1165,127 @@ p { margin: 0 0 1em; }
   text-align: right;
 }
 
+/* -------- 20. Encabezado de subpágina (sin hero) -------- */
+.page-header {
+  padding-block: clamp(4rem, 8vw, 6rem) clamp(2rem, 4vw, 3rem);
+  text-align: center;
+  background: var(--color-bg);
+}
+.page-header.bg-cream { background: var(--color-bg-alt); }
+
+.page-header-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.page-eyebrow {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin: 0 0 0.75rem;
+}
+
+.page-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw + 0.5rem, 3rem);
+  margin: 0 0 0.75rem;
+  color: var(--color-text);
+}
+
+.page-subtitle {
+  font-size: var(--fs-md);
+  color: var(--color-text-muted);
+  max-width: 60ch;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.page-verse {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--color-text);
+  margin: 1.5rem 0 0;
+  line-height: 1.6;
+}
+.page-verse-ref {
+  display: block;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 0.75rem;
+}
+
+/* Cuerpo de subpágina */
+.page-body {
+  padding-block: clamp(2rem, 5vw, 4rem);
+  background: var(--color-bg);
+}
+.page-body.bg-cream { background: var(--color-bg-alt); }
+.page-body + .page-body { padding-top: 0; }
+
+/* Necesidades de oración (oracion.html) */
+.prayer-needs {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.prayer-needs h2 {
+  font-family: var(--font-serif);
+  font-size: var(--fs-xl);
+  text-align: center;
+  margin: 0 0 1.25rem;
+}
+.prayer-needs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.prayer-needs-list li {
+  position: relative;
+  padding-left: 1.75rem;
+  color: var(--color-text);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+}
+.prayer-needs-list li::before {
+  content: "✛";
+  position: absolute;
+  left: 0;
+  top: -0.05em;
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.prayer-needs-footnote {
+  text-align: center;
+  margin: 1.5rem 0 0;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* CTA "Ver todos los ministerios" en index */
+.ministries-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
 /* -------- 8. Responsive (mobile-first ajustes) -------- */
 @media (max-width: 960px) {
   .site-nav {
