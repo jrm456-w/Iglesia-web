@@ -84,39 +84,6 @@
     });
   }
 
-  /* -------- Tabs del hub de contenido -------- */
-  const tabs = Array.from(document.querySelectorAll(".tabs .tab"));
-  const panels = Array.from(document.querySelectorAll(".tab-panel"));
-
-  const activateTab = (tabEl) => {
-    const name = tabEl.dataset.tab;
-    tabs.forEach((t) => {
-      const active = t === tabEl;
-      t.classList.toggle("is-active", active);
-      t.setAttribute("aria-selected", String(active));
-      t.setAttribute("tabindex", active ? "0" : "-1");
-    });
-    panels.forEach((panel) => {
-      const active = panel.id === `panel-${name}`;
-      panel.classList.toggle("is-active", active);
-      panel.hidden = !active;
-    });
-  };
-
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => activateTab(tab));
-    tab.addEventListener("keydown", (e) => {
-      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-      e.preventDefault();
-      const idx = tabs.indexOf(tab);
-      const nextIdx = e.key === "ArrowRight"
-        ? (idx + 1) % tabs.length
-        : (idx - 1 + tabs.length) % tabs.length;
-      tabs[nextIdx].focus();
-      activateTab(tabs[nextIdx]);
-    });
-  });
-
   /* -------- FAQ: chips + campo condicional + envío -------- */
   const faqForm = document.getElementById("faq-form");
 
