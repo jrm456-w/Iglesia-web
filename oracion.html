@@ -6,7 +6,7 @@
   <meta name="description" content="Solicita oración en Iglesia De Cristo Gazcue. Tu petición llega solo al pastor y se trata con confidencialidad.">
   <meta name="theme-color" content="#9E1B32">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.google.com; form-action 'self' mailto:; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://identity.netlify.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.gravatar.com; frame-src https://www.google.com; connect-src 'self' https://api.github.com https://identity.netlify.com; form-action 'self' mailto:; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
   <meta name="robots" content="noindex, nofollow">
 
   <meta property="og:title" content="Solicitar oración — Iglesia De Cristo Gazcue">
@@ -107,7 +107,7 @@
       <div class="container">
         <div class="prayer-needs">
           <h2 data-i18n="prayer.needs_title">Necesidades de oración esta semana</h2>
-          <ul class="prayer-needs-list">
+          <ul class="prayer-needs-list" id="prayer-needs-list">
             <li data-i18n="prayer.need_1">Por la salud de los hermanos y hermanas enfermos de la congregación.</li>
             <li data-i18n="prayer.need_2">Por los jóvenes que están iniciando su servicio en el ministerio.</li>
             <li data-i18n="prayer.need_3">Por las familias que atraviesan momentos difíciles.</li>
@@ -155,5 +155,8 @@
 
   <script src="assets/js/i18n.js" defer></script>
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/contenido.js" defer></script>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="assets/js/identity-init.js" defer></script>
 </body>
 </html>

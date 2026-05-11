@@ -57,6 +57,12 @@
       "prayer.need_3": "Por las familias que atraviesan momentos difíciles.",
       "prayer.needs_footnote": "Actualizada cada domingo",
 
+      "bulletin.eyebrow": "Esta semana",
+      "bulletin.title": "Vida de la iglesia",
+      "bulletin.reading": "Lectura de la semana",
+      "bulletin.announcements": "Próximos anuncios",
+      "bulletin.birthdays": "Cumpleaños del mes",
+
       "schedule.eyebrow": "Horarios",
       "schedule.title": "Nuestros cultos",
       "schedule.lead": "Te esperamos presencial o conéctate con nosotros desde cualquier lugar por Zoom.",
@@ -221,6 +227,12 @@
       "prayer.need_2": "For the young people starting to serve in ministry.",
       "prayer.need_3": "For families going through difficult times.",
       "prayer.needs_footnote": "Updated every Sunday",
+
+      "bulletin.eyebrow": "This week",
+      "bulletin.title": "Church life",
+      "bulletin.reading": "Reading of the week",
+      "bulletin.announcements": "Upcoming announcements",
+      "bulletin.birthdays": "Birthdays this month",
 
       "schedule.eyebrow": "Schedule",
       "schedule.title": "Our services",
