@@ -40,7 +40,10 @@
           <li><a href="#inicio" data-i18n="nav.home">Inicio</a></li>
           <li><a href="#nosotros" data-i18n="nav.about">Nosotros</a></li>
           <li><a href="#ministerios" data-i18n="nav.ministries">Ministerios</a></li>
+          <li><a href="#lectura" data-i18n="nav.reading">Lectura</a></li>
+          <li><a href="#anuncios" data-i18n="nav.announcements">Anuncios</a></li>
           <li><a href="#contenido" data-i18n="nav.content">Contenido</a></li>
+          <li><a href="#oracion" data-i18n="nav.prayer">Oración</a></li>
           <li><a href="#preguntas" data-i18n="nav.faq">Preguntas</a></li>
           <li><a href="#horarios" data-i18n="nav.schedule">Horarios</a></li>
           <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
@@ -96,6 +99,30 @@
             <p class="schedule-type" data-i18n="schedule.wednesday.type">Estudio bíblico</p>
             <a class="btn btn-ghost btn-block" href="#contacto" data-i18n="schedule.more_info">Más información</a>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-reading" id="lectura">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="reading.eyebrow">Lectura</p>
+          <h2 class="section-title" data-i18n="reading.title">Lectura de la semana</h2>
+        </header>
+        <div class="reading-card" id="reading-card">
+          <p class="reading-loading" data-i18n="reading.loading">Cargando…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-announcements" id="anuncios">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="announcements.eyebrow">Anuncios</p>
+          <h2 class="section-title" data-i18n="announcements.title">Anuncios y eventos</h2>
+        </header>
+        <div class="announcement-grid" id="announcement-grid">
+          <p class="ann-loading" data-i18n="announcements.loading">Cargando…</p>
         </div>
       </div>
     </section>
@@ -251,6 +278,41 @@
             <p class="leader-area" data-i18n="leaders.leopoldo.area">Hospitalidad y orden congregacional</p>
           </article>
         </div>
+      </div>
+    </section>
+
+    <section class="section section-prayer" id="oracion">
+      <div class="container prayer-wrap">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="prayer.eyebrow">Oración</p>
+          <h2 class="section-title" data-i18n="prayer.title">Solicitar oración</h2>
+          <p class="section-lead" data-i18n="prayer.lead">Comparte tu petición con nosotros. Si lo prefieres, puedes mantenerla anónima.</p>
+        </header>
+        <form class="prayer-form" id="prayer-form" novalidate>
+          <div class="hp" aria-hidden="true">
+            <label for="p-website">No completar</label>
+            <input type="text" id="p-website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="form-row">
+            <label for="p-name">
+              <span data-i18n="prayer.name">Tu nombre</span>
+              <span class="label-optional" data-i18n="prayer.optional">(opcional)</span>
+            </label>
+            <input type="text" id="p-name" name="name" maxlength="60" autocomplete="name">
+          </div>
+          <div class="form-row">
+            <label for="p-request" data-i18n="prayer.request">Tu petición</label>
+            <textarea id="p-request" name="request" rows="5" maxlength="500" required></textarea>
+            <p class="char-counter"><span id="p-count">0</span>/500</p>
+          </div>
+          <label class="checkbox-label">
+            <input type="checkbox" id="p-anonymous" name="anonymous">
+            <span data-i18n="prayer.anonymous">Prefiero mantenerlo anónimo</span>
+          </label>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="prayer.send">Enviar petición</button>
+          <p class="form-note" data-i18n="prayer.note">Tu petición se enviará al equipo pastoral. La trataremos con confidencialidad.</p>
+          <p class="form-status" id="prayer-status" role="status" aria-live="polite"></p>
+        </form>
       </div>
     </section>
 
@@ -429,5 +491,6 @@
 
   <script src="assets/js/i18n.js" defer></script>
   <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/contenido.js" defer></script>
 </body>
 </html>

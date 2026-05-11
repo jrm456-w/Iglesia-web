@@ -272,6 +272,77 @@
     });
   }
 
+  /* -------- Formulario de petición de oración -------- */
+  const prayerForm = document.getElementById("prayer-form");
+
+  if (prayerForm) {
+    const PRAYER_MAX = { name: 60, request: 500 };
+
+    const nameInput = prayerForm.querySelector("#p-name");
+    const requestInput = prayerForm.querySelector("#p-request");
+    const anonInput = prayerForm.querySelector("#p-anonymous");
+    const counter = prayerForm.querySelector("#p-count");
+    const statusEl = document.getElementById("prayer-status");
+    const submitBtn = prayerForm.querySelector('button[type="submit"]');
+
+    const updateCounter = () => {
+      const n = Math.min(requestInput.value.length, PRAYER_MAX.request);
+      counter.textContent = String(n);
+    };
+    requestInput.addEventListener("input", updateCounter);
+    updateCounter();
+
+    prayerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (submitBtn.disabled) return;
+
+      if (isBot(prayerForm)) {
+        statusEl.className = "form-status is-success";
+        statusEl.textContent = "Gracias, recibimos tu petición.";
+        return;
+      }
+
+      statusEl.className = "form-status";
+      statusEl.textContent = "";
+
+      const data = new FormData(prayerForm);
+      const rawName = (data.get("name") || "").toString().trim().slice(0, PRAYER_MAX.name);
+      const request = (data.get("request") || "").toString().trim().slice(0, PRAYER_MAX.request);
+      const anonymous = data.get("anonymous") === "on";
+
+      const errors = [];
+
+      const isRequestOk = request.length >= 5 && request.length <= PRAYER_MAX.request;
+      setInvalid(requestInput, !isRequestOk);
+      if (!isRequestOk) errors.push("petición");
+
+      // El nombre es opcional; solo lo marcamos inválido si excede el cap.
+      const isNameOk = rawName.length <= PRAYER_MAX.name;
+      setInvalid(nameInput, !isNameOk);
+      if (!isNameOk) errors.push("nombre");
+
+      if (errors.length) {
+        statusEl.classList.add("is-error");
+        statusEl.textContent = `Revisa estos campos: ${errors.join(", ")}.`;
+        return;
+      }
+
+      // Si pidió anonimato o no escribió nombre, no se incluye en el envío.
+      const displayName = anonymous || !rawName ? "Anónimo" : rawName;
+
+      const subject = `Petición de oración — ${displayName}`;
+      const bodyLines = [`De: ${displayName}`, ``, `Petición:`, request];
+      const body = bodyLines.join("\n");
+
+      submitBtn.disabled = true;
+      window.location.href = buildMailto(subject, body);
+
+      statusEl.classList.add("is-success");
+      statusEl.textContent = "Abriendo tu cliente de correo… si no se abre, revisa tu configuración.";
+      setTimeout(() => { submitBtn.disabled = false; }, 3000);
+    });
+  }
+
   /* -------- Scroll spy: resalta el enlace activo del menú -------- */
   const sections = document.querySelectorAll("main section[id]");
   const navLinks = Array.from(document.querySelectorAll('.site-nav a[href^="#"]'));
