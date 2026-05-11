@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Solicita oración en Iglesia De Cristo Gazcue. Tu petición llega solo al pastor y se trata con confidencialidad.">
+  <meta name="theme-color" content="#9E1B32">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.google.com; form-action 'self' mailto:; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+  <meta name="robots" content="noindex, nofollow">
+
+  <meta property="og:title" content="Solicitar oración — Iglesia De Cristo Gazcue">
+  <meta property="og:description" content="Comparte tu petición de oración con el equipo pastoral.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_DO">
+
+  <title>Solicitar oración — Iglesia De Cristo Gazcue</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap">
+
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="a11y.skip">Saltar al contenido</a>
+
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="Iglesia De Cristo Gazcue — Inicio">
+        <img src="assets/img/logo.png" alt="" class="brand-logo" id="brand-logo">
+        <span class="brand-text">
+          <span class="brand-line">Iglesia De Cristo</span>
+          <span class="brand-sub">Gazcue</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="index.html" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="index.html#nosotros" data-i18n="nav.about">Nosotros</a></li>
+          <li><a href="ministerios.html" data-i18n="nav.ministries">Ministerios</a></li>
+          <li><a href="lideres.html" data-i18n="nav.leaders">Líderes</a></li>
+          <li><a href="oracion.html" data-i18n="nav.prayer">Oración</a></li>
+          <li><a href="index.html#horarios" data-i18n="nav.schedule">Horarios</a></li>
+          <li><a href="index.html#contacto" data-i18n="nav.contact">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-toggle" role="group" aria-label="Idioma">
+          <button type="button" class="lang-btn is-active" data-lang="es" aria-pressed="true">ES</button>
+          <span class="lang-sep" aria-hidden="true">|</span>
+          <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Abrir menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-header bg-cream">
+      <div class="container page-header-inner">
+        <p class="page-eyebrow" data-i18n="prayer.eyebrow">Oración</p>
+        <h1 class="page-title" data-i18n="prayer.title">Solicitar oración</h1>
+        <p class="page-subtitle" data-i18n="prayer.lead">Comparte tu petición con nosotros. Si lo prefieres, puedes mantenerla anónima.</p>
+        <blockquote class="page-verse">
+          <span data-i18n="prayer.verse">Sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias.</span>
+          <span class="page-verse-ref" data-i18n="prayer.verse_ref">Filipenses 4:6</span>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="page-body bg-cream">
+      <div class="container prayer-wrap">
+        <form class="prayer-form" id="prayer-form" novalidate>
+          <div class="hp" aria-hidden="true">
+            <label for="p-website">No completar</label>
+            <input type="text" id="p-website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="form-row">
+            <label for="p-name">
+              <span data-i18n="prayer.name">Tu nombre</span>
+              <span class="label-optional" data-i18n="prayer.optional">(opcional)</span>
+            </label>
+            <input type="text" id="p-name" name="name" maxlength="60" autocomplete="name">
+          </div>
+          <div class="form-row">
+            <label for="p-request" data-i18n="prayer.request">Tu petición</label>
+            <textarea id="p-request" name="request" rows="5" maxlength="500" required></textarea>
+            <p class="char-counter"><span id="p-count">0</span>/500</p>
+          </div>
+          <label class="checkbox-label">
+            <input type="checkbox" id="p-anonymous" name="anonymous">
+            <span data-i18n="prayer.anonymous">Prefiero mantenerlo anónimo</span>
+          </label>
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="prayer.send">Enviar petición</button>
+          <p class="form-note" data-i18n="prayer.note">Tu petición llega solo al pastor. No se publica en el sitio.</p>
+          <p class="form-status" id="prayer-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="page-body">
+      <div class="container">
+        <div class="prayer-needs">
+          <h2 data-i18n="prayer.needs_title">Necesidades de oración esta semana</h2>
+          <ul class="prayer-needs-list">
+            <li data-i18n="prayer.need_1">Por la salud de los hermanos y hermanas enfermos de la congregación.</li>
+            <li data-i18n="prayer.need_2">Por los jóvenes que están iniciando su servicio en el ministerio.</li>
+            <li data-i18n="prayer.need_3">Por las familias que atraviesan momentos difíciles.</li>
+          </ul>
+          <p class="prayer-needs-footnote" data-i18n="prayer.needs_footnote">Actualizada cada domingo</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="brand-text">
+          <span class="brand-line">Iglesia De Cristo</span>
+          <span class="brand-sub">Gazcue</span>
+        </span>
+        <p data-i18n="footer.tagline">Comunidad cristiana no denominacional</p>
+      </div>
+      <nav class="footer-nav" aria-label="Pie de página">
+        <h4 data-i18n="footer.nav_title">Navegación</h4>
+        <ul>
+          <li><a href="index.html" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="ministerios.html" data-i18n="nav.ministries">Ministerios</a></li>
+          <li><a href="lideres.html" data-i18n="nav.leaders">Líderes</a></li>
+          <li><a href="oracion.html" data-i18n="nav.prayer">Oración</a></li>
+          <li><a href="index.html#contacto" data-i18n="nav.contact">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="footer-social">
+        <h4 data-i18n="footer.social_title">Síguenos</h4>
+        <ul class="social-list">
+          <li><a href="https://www.facebook.com/idcgazcue/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">Facebook</a></li>
+          <li><a href="https://www.instagram.com/idcgazcue/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a></li>
+          <li><a href="https://www.youtube.com/@iglesiadecristogazcue7163" target="_blank" rel="noopener noreferrer" aria-label="YouTube">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© <span id="year">2026</span> Iglesia De Cristo Gazcue</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/i18n.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
