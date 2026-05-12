@@ -67,6 +67,11 @@
     return "/" + v;
   }
 
+  // Lista los .json de una carpeta usando la GitHub Contents API.
+  // Devuelve PATHS LOCALES (ej. "data/oracion/x.json") para luego hacer
+  // fetch mismo-origen contra Netlify — evita el cert SSL externo de
+  // raw.githubusercontent.com (que en algunas redes corporativas se
+  // intercepta y rompe con ERR_CERT_AUTHORITY_INVALID).
   async function listarArchivos(carpeta) {
     try {
       const res = await fetch(`${API}/${carpeta}?ref=${BRANCH}`, {
@@ -76,16 +81,17 @@
       const archivos = await res.json();
       if (!Array.isArray(archivos)) return [];
       return archivos
-        .filter((f) => f && f.type === "file" && typeof f.name === "string" && f.name.endsWith(".json") && f.download_url)
-        .map((f) => f.download_url);
+        .filter((f) => f && f.type === "file" && typeof f.name === "string" && f.name.endsWith(".json") && f.path)
+        .map((f) => f.path);
     } catch {
       return [];
     }
   }
 
-  async function fetchJSON(url) {
+  // Fetch del JSON desde el dominio actual (Netlify lo sirve junto al sitio).
+  async function fetchJSON(path) {
     try {
-      const res = await fetch(url);
+      const res = await fetch(path, { cache: "no-cache" });
       if (!res.ok) return null;
       const data = await res.json();
       return data && typeof data === "object" ? data : null;

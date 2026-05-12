@@ -53,12 +53,6 @@
     return hp && hp.value !== "";
   };
 
-  /* -------- Reemplazo del logo si la imagen no carga -------- */
-  const logo = document.getElementById("brand-logo");
-  if (logo) {
-    logo.addEventListener("error", () => logo.classList.add("is-missing"), { once: true });
-  }
-
   /* -------- Año dinámico en el footer -------- */
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
