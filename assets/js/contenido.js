@@ -98,6 +98,17 @@
     return docs.filter(Boolean);
   }
 
+  // Caché por carpeta (almacena la promesa, no el resultado) para evitar
+  // que el toggle de idioma vuelva a golpear la GitHub API. Las requests
+  // concurrentes durante el primer render comparten la misma promesa.
+  const entriesCache = {};
+  const loadEntries = (folder) => {
+    if (!entriesCache[folder]) {
+      entriesCache[folder] = cargarCarpeta(folder);
+    }
+    return entriesCache[folder];
+  };
+
   /* ----- Helpers ----- */
   const parseDay = (s) => {
     if (!s) return 9999;
@@ -119,7 +130,7 @@
     const target = document.getElementById("seccion-cumpleanos");
     if (!target) return;
 
-    const entries = await cargarCarpeta("cumpleanos");
+    const entries = await loadEntries("cumpleanos");
     const mesActual = new Date().getMonth() + 1;
     const lang = getLang();
 
@@ -173,7 +184,7 @@
     const target = document.getElementById("lista-oracion");
     if (!target) return;
 
-    const entries = await cargarCarpeta("oracion");
+    const entries = await loadEntries("oracion");
     const active = entries.filter(estaActivo);
     const lang = getLang();
 
@@ -197,7 +208,7 @@
     const target = document.getElementById("seccion-anuncios");
     if (!target) return;
 
-    const entries = await cargarCarpeta("anuncios");
+    const entries = await loadEntries("anuncios");
     const active = entries
       .filter(estaActivo)
       .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")));
@@ -235,7 +246,7 @@
     const target = document.getElementById("seccion-lectura");
     if (!target) return;
 
-    const entries = await cargarCarpeta("lectura");
+    const entries = await loadEntries("lectura");
     const active = entries.filter(estaActivo);
     if (!active.length) { clear(target); return; }
 
@@ -265,6 +276,7 @@
     renderAll();
   }
 
+  // Un solo listener para evitar re-renders duplicados. i18n.js despacha
+  // 'langChange' en window y 'i18n:change' en document; escogemos uno.
   window.addEventListener("langChange", renderAll);
-  document.addEventListener("i18n:change", renderAll);
 })();

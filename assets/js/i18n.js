@@ -389,7 +389,13 @@
 
     document.querySelectorAll("[data-i18n]").forEach((el) => {
       const key = el.dataset.i18n;
-      const value = dict[key];
+      // Fallback: si la clave no existe en el idioma activo, usa ES para
+      // evitar dejar el elemento sin texto. Si tampoco existe en ES, no
+      // toca el contenido (queda lo que diga el HTML).
+      let value = dict[key];
+      if (value === undefined && lang !== DEFAULT_LANG) {
+        value = translations[DEFAULT_LANG] && translations[DEFAULT_LANG][key];
+      }
       if (value !== undefined) el.textContent = value;
     });
 

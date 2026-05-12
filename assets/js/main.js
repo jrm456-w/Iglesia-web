@@ -284,14 +284,18 @@
 
     const nameInput = prayerForm.querySelector("#p-name");
     const requestInput = prayerForm.querySelector("#p-request");
-    const anonInput = prayerForm.querySelector("#p-anonymous");
     const counter = prayerForm.querySelector("#p-count");
     const statusEl = document.getElementById("prayer-status");
     const submitBtn = prayerForm.querySelector('button[type="submit"]');
 
+    // Trunca el valor al teclear si se intenta exceder PRAYER_MAX.request
+    // (caso en que se manipule maxlength desde DevTools); así el contador
+    // y el valor enviado siempre coinciden.
     const updateCounter = () => {
-      const n = Math.min(requestInput.value.length, PRAYER_MAX.request);
-      counter.textContent = String(n);
+      if (requestInput.value.length > PRAYER_MAX.request) {
+        requestInput.value = requestInput.value.slice(0, PRAYER_MAX.request);
+      }
+      counter.textContent = String(requestInput.value.length);
     };
     requestInput.addEventListener("input", updateCounter);
     updateCounter();
