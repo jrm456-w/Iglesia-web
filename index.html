@@ -37,11 +37,12 @@
 
       <nav class="site-nav" id="site-nav" aria-label="Navegación principal">
         <ul class="nav-list">
-          <li><a href="#inicio" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="index.html" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="nosotros.html" data-i18n="nav.about">Conócenos</a></li>
           <li><a href="ministerios.html" data-i18n="nav.ministries">Ministerios</a></li>
           <li><a href="lideres.html" data-i18n="nav.leaders">Líderes</a></li>
+          <li><a href="cumpleanos.html" data-i18n="nav.birthdays">Cumpleaños</a></li>
           <li><a href="oracion.html" data-i18n="nav.prayer">Oración</a></li>
-          <li><a href="#horarios" data-i18n="nav.schedule">Horarios</a></li>
           <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
         </ul>
       </nav>
@@ -99,7 +100,30 @@
       </div>
     </section>
 
-    <section class="section section-ministries" id="ministerios">
+    <section class="section section-versiculo bg-cream">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="index.lectura.eyebrow">📖 Lectura</p>
+          <h2 class="section-title" data-i18n="index.lectura.title">Versículo de la semana</h2>
+        </header>
+        <div id="seccion-lectura"></div>
+      </div>
+    </section>
+
+    <section class="section section-oracion-index">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="index.oracion.eyebrow">🙏 Oración</p>
+          <h2 class="section-title" data-i18n="index.oracion.title">Oración y peticiones de la semana</h2>
+        </header>
+        <div id="lista-oracion"></div>
+        <div class="oracion-cta">
+          <a href="oracion.html" class="btn btn-primary" data-i18n="index.oracion.cta">Enviar mi petición</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-ministries bg-cream" id="ministerios">
       <div class="container">
         <header class="section-head">
           <p class="section-eyebrow" data-i18n="ministries.eyebrow">Ministerios</p>
@@ -124,19 +148,6 @@
         </div>
         <div class="ministries-cta">
           <a class="btn btn-ghost" href="ministerios.html" data-i18n="ministries.see_all">Ver todos los ministerios →</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-birthdays">
-      <div class="container">
-        <header class="section-head">
-          <p class="section-eyebrow" data-i18n="cumpleanos.eyebrow">🎂 Cumpleaños del mes</p>
-          <h2 class="section-title" data-i18n="cumpleanos.title">Celebramos juntos</h2>
-          <p class="section-lead" data-i18n="cumpleanos.lead">Si conoces a alguien de la congregación que cumple este mes y no aparece aquí, avísanos.</p>
-        </header>
-        <div class="birthday-grid" id="seccion-cumpleanos">
-          <p class="empty-msg">Cargando…</p>
         </div>
       </div>
     </section>
@@ -186,8 +197,10 @@
         <h4 data-i18n="footer.nav_title">Navegación</h4>
         <ul>
           <li><a href="index.html" data-i18n="nav.home">Inicio</a></li>
+          <li><a href="nosotros.html" data-i18n="nav.about">Conócenos</a></li>
           <li><a href="ministerios.html" data-i18n="nav.ministries">Ministerios</a></li>
           <li><a href="lideres.html" data-i18n="nav.leaders">Líderes</a></li>
+          <li><a href="cumpleanos.html" data-i18n="nav.birthdays">Cumpleaños</a></li>
           <li><a href="oracion.html" data-i18n="nav.prayer">Oración</a></li>
           <li><a href="index.html#contacto" data-i18n="nav.contact">Contacto</a></li>
         </ul>

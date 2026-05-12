@@ -1,19 +1,22 @@
 /* ============================================================
    Iglesia De Cristo Gazcue — contenido.js
    Lee dinámicamente las carpetas data/* del repo en GitHub
-   vía la Contents API. Cada archivo nuevo que cree el panel
-   CMS aparece en el sitio sin tocar código.
+   vía la Contents API. Cada archivo nuevo creado por el panel
+   CMS aparece en el sitio sin tocar código ni manifiestos.
 
-   Seguridad: todo lo que entra al DOM se inserta con
-   textContent o atributos controlados — nunca innerHTML con
-   datos externos.
+   Seguridad: todas las inserciones al DOM se hacen con
+   textContent y createElement — nunca innerHTML con datos
+   externos.
 
-   Fixes defensivos:
-   · activo === false es la única condición que excluye (los
-     archivos donde activo no exista se consideran activos).
-   · mes se compara con parseInt, así tolera string o número.
-   · resolverRutaFoto normaliza rutas absolutas/relativas y
-     img.onerror reemplaza la imagen rota por un emoji.
+   Reglas defensivas:
+   · activo !== false (permisivo: si falta el campo se considera activo).
+   · mes se compara con parseInt (acepta string o número).
+   · texto(item, campo) cae a *_es si falta *_en o viene vacío.
+   · resolverFoto normaliza rutas absolutas/relativas; img.onerror
+     reemplaza la imagen rota por el emoji 🎂.
+   · Si una sección no tiene entradas activas, se oculta su
+     <section> contenedora (con la excepción de #seccion-cumpleanos
+     que muestra mensaje "no hay cumpleaños este mes").
    ============================================================ */
 
 (function () {
@@ -23,39 +26,39 @@
   const BRANCH = "main";
   const API = `https://api.github.com/repos/${REPO}/contents/data`;
 
-  const TIPO_LABELS = {
-    evento: { es: "Evento", en: "Event" },
-    semanal: { es: "Semanal", en: "Weekly" },
-    mensual: { es: "Mensual", en: "Monthly" }
+  const COLORES_BADGE = {
+    evento: "#9E1B32",
+    semanal: "#1B5E9E",
+    mensual: "#1B7A3E"
   };
 
-  const EMPTY = {
-    cumpleanos: { es: "No hay cumpleaños este mes", en: "No birthdays this month" },
-    oracion: { es: "Estén atentos, actualizamos cada domingo", en: "Stay tuned, we update every Sunday" }
-  };
-
-  const getLang = () => {
+  function getLang() {
     if (window.IDCGi18n && typeof window.IDCGi18n.get === "function") {
       return window.IDCGi18n.get();
     }
-    try { return localStorage.getItem("lang") || localStorage.getItem("idcg_lang") || "es"; }
+    try { return localStorage.getItem("lang") || "es"; }
     catch { return "es"; }
-  };
+  }
 
-  const clear = (el) => { while (el && el.firstChild) el.removeChild(el.firstChild); };
+  // Devuelve el texto correcto según idioma activo.
+  // Si lang === 'en' y el campo *_en existe y no está vacío, devuelve EN;
+  // si no, cae a *_es; si no, intenta el campo bare; si no, "".
+  function texto(item, campo) {
+    if (!item || !campo) return "";
+    const lang = getLang();
+    const campoEn = campo + "_en";
+    const campoEs = campo + "_es";
+    if (lang === "en" && item[campoEn] && String(item[campoEn]).trim() !== "") {
+      return item[campoEn];
+    }
+    if (item[campoEs]) return item[campoEs];
+    if (item[campo]) return item[campo];
+    return "";
+  }
 
-  const make = (tag, className, text) => {
-    const el = document.createElement(tag);
-    if (className) el.className = className;
-    if (text !== undefined && text !== null) el.textContent = String(text);
-    return el;
-  };
-
-  /* ----- BUG 1: activo permisivo (excluye solo si === false) ----- */
-  const estaActivo = (item) => !item || item.activo !== false;
-
-  /* ----- BUG 3: normalizar la ruta de la foto ----- */
-  function resolverRutaFoto(foto) {
+  // Normaliza ruta de imagen: vacío → null; http(s) → tal cual;
+  // empieza con "/" → tal cual; si no → prepend "/".
+  function resolverFoto(foto) {
     if (foto === undefined || foto === null) return null;
     const v = String(foto).trim();
     if (v === "") return null;
@@ -64,7 +67,6 @@
     return "/" + v;
   }
 
-  /* ----- Listado y carga via GitHub Contents API ----- */
   async function listarArchivos(carpeta) {
     try {
       const res = await fetch(`${API}/${carpeta}?ref=${BRANCH}`, {
@@ -92,182 +94,212 @@
     }
   }
 
-  async function cargarCarpeta(nombre) {
-    const urls = await listarArchivos(nombre);
-    const docs = await Promise.all(urls.map(fetchJSON));
-    return docs.filter(Boolean);
+  // Caché por carpeta para evitar repetir fetch en cada cambio de idioma.
+  const cache = {};
+  function loadCarpeta(carpeta) {
+    if (!cache[carpeta]) {
+      cache[carpeta] = (async () => {
+        const urls = await listarArchivos(carpeta);
+        const docs = await Promise.all(urls.map(fetchJSON));
+        return docs.filter(Boolean);
+      })();
+    }
+    return cache[carpeta];
   }
 
-  // Caché por carpeta (almacena la promesa, no el resultado) para evitar
-  // que el toggle de idioma vuelva a golpear la GitHub API. Las requests
-  // concurrentes durante el primer render comparten la misma promesa.
-  const entriesCache = {};
-  const loadEntries = (folder) => {
-    if (!entriesCache[folder]) {
-      entriesCache[folder] = cargarCarpeta(folder);
-    }
-    return entriesCache[folder];
-  };
+  function ocultarSeccion(el) {
+    const seccion = el.closest("section");
+    if (seccion) seccion.style.display = "none";
+  }
 
-  /* ----- Helpers ----- */
-  const parseDay = (s) => {
-    if (!s) return 9999;
-    const m = String(s).match(/\d+/);
-    return m ? parseInt(m[0], 10) : 9999;
-  };
+  function mostrarSeccion(el) {
+    const seccion = el.closest("section");
+    if (seccion) seccion.style.display = "";
+  }
 
-  const formatISODate = (iso, lang) => {
-    if (!iso || typeof iso !== "string") return "";
-    try {
-      const d = new Date(iso + "T00:00:00");
-      if (isNaN(d.getTime())) return iso;
-      return d.toLocaleDateString(lang === "en" ? "en-US" : "es-DO", { year: "numeric", month: "long", day: "numeric" });
-    } catch { return iso; }
-  };
-
-  /* ----- 1. Cumpleaños del mes ----- */
+  /* ----- CUMPLEAÑOS ----- */
   async function cargarCumpleanos() {
-    const target = document.getElementById("seccion-cumpleanos");
-    if (!target) return;
+    const el = document.getElementById("seccion-cumpleanos");
+    if (!el) return;
+    el.innerHTML = "";
+    mostrarSeccion(el);
 
-    const entries = await loadEntries("cumpleanos");
     const mesActual = new Date().getMonth() + 1;
-    const lang = getLang();
+    const todos = await loadCarpeta("cumpleanos");
+    const filtrados = todos.filter((item) =>
+      item && item.activo !== false && parseInt(item.mes, 10) === mesActual
+    );
 
-    // BUG 1 + BUG 2 aplicados.
-    const list = entries
-      .filter((e) => estaActivo(e) && parseInt(e.mes, 10) === mesActual)
-      .sort((a, b) => parseDay(a.fecha) - parseDay(b.fecha));
-
-    clear(target);
-    if (!list.length) {
-      target.appendChild(make("p", "empty-msg", EMPTY.cumpleanos[lang] || EMPTY.cumpleanos.es));
+    if (filtrados.length === 0) {
+      const msg = document.createElement("p");
+      msg.className = "cumpleanos-vacio";
+      msg.textContent = getLang() === "en"
+        ? "No birthdays this month."
+        : "No hay cumpleaños este mes.";
+      el.appendChild(msg);
       return;
     }
 
-    list.forEach((b) => {
-      const card = make("article", "birthday-card");
-      const rutaFoto = resolverRutaFoto(b.foto);
+    const grid = document.createElement("div");
+    grid.className = "cumpleanos-grid";
 
+    filtrados.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "cumpleanos-card";
+
+      const rutaFoto = resolverFoto(item.foto);
       if (rutaFoto) {
         const img = document.createElement("img");
-        img.className = "cumpleanos-foto";
         img.src = rutaFoto;
-        img.alt = "Foto de " + (b.nombre || "");
+        img.alt = item.nombre || "";
+        img.className = "cumpleanos-foto";
         img.loading = "lazy";
-        img.width = 80;
-        img.height = 80;
-        // Si la imagen falla, la reemplazamos por el emoji para no romper el grid.
         img.onerror = function () {
           const emoji = document.createElement("span");
           emoji.textContent = "🎂";
           emoji.className = "cumpleanos-emoji";
           emoji.setAttribute("aria-hidden", "true");
-          this.replaceWith(emoji);
+          this.parentNode.replaceChild(emoji, this);
         };
         card.appendChild(img);
       } else {
-        const emoji = make("span", "cumpleanos-emoji");
+        const emoji = document.createElement("span");
         emoji.textContent = "🎂";
+        emoji.className = "cumpleanos-emoji";
         emoji.setAttribute("aria-hidden", "true");
         card.appendChild(emoji);
       }
 
-      card.appendChild(make("p", "birthday-name", b.nombre || ""));
-      card.appendChild(make("p", "birthday-date", b.fecha || ""));
-      target.appendChild(card);
+      const nombre = document.createElement("p");
+      nombre.className = "cumpleanos-nombre";
+      nombre.textContent = item.nombre || "";
+      card.appendChild(nombre);
+
+      const fecha = document.createElement("p");
+      fecha.className = "cumpleanos-fecha";
+      fecha.textContent = item.fecha || "";
+      card.appendChild(fecha);
+
+      grid.appendChild(card);
     });
+
+    el.appendChild(grid);
   }
 
-  /* ----- 2. Necesidades de oración ----- */
+  /* ----- ORACIÓN ----- */
   async function cargarOracion() {
-    const target = document.getElementById("lista-oracion");
-    if (!target) return;
+    const el = document.getElementById("lista-oracion");
+    if (!el) return;
+    el.innerHTML = "";
 
-    const entries = await loadEntries("oracion");
-    const active = entries.filter(estaActivo);
-    const lang = getLang();
+    const todos = await loadCarpeta("oracion");
+    const activos = todos.filter((item) => item && item.activo !== false);
 
-    clear(target);
-    if (!active.length) {
-      const empty = make("li", "empty-msg");
-      empty.textContent = EMPTY.oracion[lang] || EMPTY.oracion.es;
-      target.appendChild(empty);
+    if (activos.length === 0) {
+      ocultarSeccion(el);
       return;
     }
+    mostrarSeccion(el);
 
-    active.forEach((n) => {
-      const text = (n["necesidad_" + lang] || n.necesidad_es || "").trim();
-      if (!text) return;
-      target.appendChild(make("li", null, text));
+    const lista = document.createElement("ul");
+    lista.className = "oracion-lista";
+    activos.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = texto(item, "necesidad");
+      lista.appendChild(li);
     });
+    el.appendChild(lista);
   }
 
-  /* ----- 3. Anuncios y eventos ----- */
+  /* ----- VERSÍCULO / LECTURA ----- */
+  async function cargarLectura() {
+    const el = document.getElementById("seccion-lectura");
+    if (!el) return;
+    el.innerHTML = "";
+
+    const todos = await loadCarpeta("lectura");
+    const activo = todos.find((item) => item && item.activo !== false);
+
+    if (!activo) {
+      ocultarSeccion(el);
+      return;
+    }
+    mostrarSeccion(el);
+
+    const versiculo = document.createElement("blockquote");
+    versiculo.className = "lectura-versiculo";
+    versiculo.textContent = texto(activo, "versiculo");
+    el.appendChild(versiculo);
+
+    if (activo.referencia) {
+      const referencia = document.createElement("cite");
+      referencia.className = "lectura-referencia";
+      referencia.textContent = activo.referencia;
+      el.appendChild(referencia);
+    }
+
+    const refl = texto(activo, "reflexion");
+    if (refl) {
+      const reflexion = document.createElement("p");
+      reflexion.className = "lectura-reflexion";
+      reflexion.textContent = refl;
+      el.appendChild(reflexion);
+    }
+  }
+
+  /* ----- ANUNCIOS ----- */
   async function cargarAnuncios() {
-    const target = document.getElementById("seccion-anuncios");
-    if (!target) return;
+    const el = document.getElementById("seccion-anuncios");
+    if (!el) return;
+    el.innerHTML = "";
 
-    const entries = await loadEntries("anuncios");
-    const active = entries
-      .filter(estaActivo)
+    const todos = await loadCarpeta("anuncios");
+    const activos = todos
+      .filter((item) => item && item.activo !== false)
       .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")));
-    const lang = getLang();
 
-    clear(target);
-    if (!active.length) return;
+    if (activos.length === 0) {
+      ocultarSeccion(el);
+      return;
+    }
+    mostrarSeccion(el);
 
-    active.forEach((a) => {
-      const card = make("article", "ann-card");
-      const tipo = TIPO_LABELS[a.tipo] ? a.tipo : "evento";
-      const badge = make("span", "ann-badge ann-badge-" + tipo);
-      badge.textContent = TIPO_LABELS[tipo][lang] || TIPO_LABELS[tipo].es;
+    const grid = document.createElement("div");
+    grid.className = "anuncios-grid";
+
+    activos.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "anuncio-card";
+
+      const tipo = COLORES_BADGE[item.tipo] ? item.tipo : "evento";
+      const badge = document.createElement("span");
+      badge.className = "anuncio-badge";
+      badge.style.background = COLORES_BADGE[tipo];
+      badge.textContent = tipo;
       card.appendChild(badge);
 
-      const title = a["titulo_" + lang] || a.titulo_es || "";
-      if (title) card.appendChild(make("h3", "ann-title", title));
+      const titulo = document.createElement("h3");
+      titulo.className = "anuncio-titulo";
+      titulo.textContent = texto(item, "titulo");
+      card.appendChild(titulo);
 
-      const dateFmt = formatISODate(a.fecha, lang);
-      if (dateFmt) {
-        const t = make("time", "ann-date", dateFmt);
-        t.dateTime = a.fecha || "";
-        card.appendChild(t);
-      }
+      const desc = document.createElement("p");
+      desc.className = "anuncio-desc";
+      desc.textContent = texto(item, "descripcion");
+      card.appendChild(desc);
 
-      const desc = a["descripcion_" + lang] || a.descripcion_es || "";
-      if (desc) card.appendChild(make("p", "ann-desc", desc));
-
-      target.appendChild(card);
+      grid.appendChild(card);
     });
+
+    el.appendChild(grid);
   }
 
-  /* ----- 4. Lectura de la semana ----- */
-  async function cargarLectura() {
-    const target = document.getElementById("seccion-lectura");
-    if (!target) return;
-
-    const entries = await loadEntries("lectura");
-    const active = entries.filter(estaActivo);
-    if (!active.length) { clear(target); return; }
-
-    const L = active[0];
-    const lang = getLang();
-
-    clear(target);
-    const verse = L["versiculo_" + lang] || L.versiculo_es || "";
-    const ref = L.referencia || "";
-    const refl = L["reflexion_" + lang] || L.reflexion_es || "";
-    if (verse) target.appendChild(make("blockquote", "reading-verse", verse));
-    if (ref) target.appendChild(make("p", "reading-reference", ref));
-    if (refl) target.appendChild(make("p", "reading-reflection", refl));
-  }
-
-  /* ----- Inicio y reactividad al cambio de idioma ----- */
+  /* ----- INIT ----- */
   const renderAll = () => {
     cargarCumpleanos();
     cargarOracion();
-    cargarAnuncios();
     cargarLectura();
+    cargarAnuncios();
   };
 
   if (document.readyState === "loading") {
@@ -276,7 +308,7 @@
     renderAll();
   }
 
-  // Un solo listener para evitar re-renders duplicados. i18n.js despacha
-  // 'langChange' en window y 'i18n:change' en document; escogemos uno.
+  // Un solo listener: i18n.js despacha 'langChange' tanto en window
+  // como en document; escuchamos en window para evitar el double-render.
   window.addEventListener("langChange", renderAll);
 })();

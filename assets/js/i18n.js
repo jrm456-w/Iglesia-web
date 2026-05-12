@@ -14,9 +14,10 @@
       "a11y.skip": "Saltar al contenido",
 
       "nav.home": "Inicio",
-      "nav.about": "Nosotros",
+      "nav.about": "Conócenos",
       "nav.ministries": "Ministerios",
       "nav.leaders": "Líderes",
+      "nav.birthdays": "Cumpleaños",
       "nav.reading": "Lectura",
       "nav.announcements": "Anuncios",
       "nav.content": "Contenido",
@@ -61,9 +62,16 @@
       "bulletin.announcements": "Próximos anuncios",
       "bulletin.birthdays": "Cumpleaños del mes",
 
-      "cumpleanos.eyebrow": "🎂 Cumpleaños del mes",
-      "cumpleanos.title": "Celebramos juntos",
-      "cumpleanos.lead": "Si conoces a alguien de la congregación que cumple este mes y no aparece aquí, avísanos.",
+      "cumpleanos.eyebrow": "🎂 Cumpleaños",
+      "cumpleanos.title": "Cumpleaños del mes",
+      "cumpleanos.lead": "Celebramos con cada miembro de nuestra familia en Cristo.",
+      "cumpleanos.empty": "No hay cumpleaños registrados este mes.",
+
+      "index.lectura.eyebrow": "📖 Lectura",
+      "index.lectura.title": "Versículo de la semana",
+      "index.oracion.eyebrow": "🙏 Oración",
+      "index.oracion.title": "Oración y peticiones de la semana",
+      "index.oracion.cta": "Enviar mi petición",
 
       "oracion.list_title": "Esta semana oramos por…",
       "prayer.verse": "Oren en el Espíritu en todo momento.",
@@ -191,9 +199,10 @@
       "a11y.skip": "Skip to content",
 
       "nav.home": "Home",
-      "nav.about": "About",
+      "nav.about": "About us",
       "nav.ministries": "Ministries",
       "nav.leaders": "Leaders",
+      "nav.birthdays": "Birthdays",
       "nav.reading": "Reading",
       "nav.announcements": "Announcements",
       "nav.content": "Content",
@@ -238,9 +247,16 @@
       "bulletin.announcements": "Upcoming announcements",
       "bulletin.birthdays": "Birthdays this month",
 
-      "cumpleanos.eyebrow": "🎂 Birthdays this month",
-      "cumpleanos.title": "We celebrate together",
-      "cumpleanos.lead": "If you know someone from the congregation who is celebrating this month and isn't here, please let us know.",
+      "cumpleanos.eyebrow": "🎂 Birthdays",
+      "cumpleanos.title": "Birthdays this month",
+      "cumpleanos.lead": "We celebrate with every member of our family in Christ.",
+      "cumpleanos.empty": "No birthdays registered this month.",
+
+      "index.lectura.eyebrow": "📖 Reading",
+      "index.lectura.title": "Verse of the week",
+      "index.oracion.eyebrow": "🙏 Prayer",
+      "index.oracion.title": "Prayer requests this week",
+      "index.oracion.cta": "Send my request",
 
       "oracion.list_title": "This week we pray for…",
       "prayer.verse": "Pray in the Spirit at all times.",
