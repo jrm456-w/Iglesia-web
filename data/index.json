@@ -1,0 +1,6 @@
+{
+  "cumpleanos": ["ejemplo-1.json", "ejemplo-2.json"],
+  "oracion": ["ejemplo-1.json", "ejemplo-2.json"],
+  "anuncios": ["ejemplo-1.json"],
+  "lectura": ["semana-actual.json"]
+}

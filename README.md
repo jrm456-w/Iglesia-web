@@ -3,37 +3,19 @@
 Sitio estático bilingüe (ES/EN) de la **Iglesia De Cristo Gazcue**
 (Calle Caonabo #6, Gazcue, Santo Domingo, República Dominicana).
 
-HTML/CSS/JS vanilla, sin build step ni dependencias.
-Pensado para desplegarse en Netlify desde la rama `main`.
+HTML/CSS/JS vanilla, sin build step ni dependencias. Despliegue en
+Netlify desde la rama `main`.
 
 ---
 
-## Estructura de archivos
+## Páginas
 
 ```
-.
-├── index.html               Página principal
-├── ministerios.html         Listado completo de ministerios
-├── lideres.html             Cuerpo ministerial + historia de la iglesia
-├── oracion.html             Formulario de petición + necesidades semanales
-├── admin/
-│   ├── index.html           Punto de entrada de Netlify CMS
-│   └── config.yml           Definición de colecciones del CMS
-├── assets/
-│   ├── css/styles.css       Hoja de estilos única
-│   ├── js/
-│   │   ├── i18n.js          Diccionarios ES/EN + toggle persistente
-│   │   ├── main.js          Nav, formularios, scroll spy, sanitización
-│   │   ├── contenido.js     Lee contenido del CMS y lo renderiza
-│   │   └── identity-init.js Redirige a /admin/ tras login en Identity
-│   └── img/
-│       ├── lideres/         Fotos de los 9 líderes (400×400)
-│       └── uploads/         Imágenes subidas desde el CMS
-└── data/                    Contenido editable por el CMS (JSON)
-    ├── anuncios/            Una entrada por archivo
-    ├── cumpleanos/
-    ├── oracion/
-    └── lectura/
+index.html        Hero · Horarios · Ministerios resumen · Cumpleaños del mes · Contacto rápido
+ministerios.html  Todos los ministerios con detalle
+lideres.html      Equipo pastoral con fotos + Historia
+oracion.html      Formulario de petición + Necesidades de la semana
+admin/            Panel de Netlify CMS
 ```
 
 ---
@@ -41,43 +23,70 @@ Pensado para desplegarse en Netlify desde la rama `main`.
 ## Configuración del panel admin
 
 El panel `/admin/` usa **Netlify CMS** con **git-gateway** y
-**Netlify Identity**. Para que funcione hay que activarlo desde el
-dashboard de Netlify una sola vez:
+**Netlify Identity**. Para que funcione, en el dashboard de Netlify:
 
 1. **Site configuration → Identity → Enable Identity**
-2. **Registration**: cambia a `Invite only` (solo personas invitadas
-   pueden iniciar sesión).
+2. **Registration**: `Invite only` (solo personas invitadas pueden
+   iniciar sesión).
 3. **Services → Git Gateway → Enable Git Gateway**
 4. **Identity → Invite users** → invita los correos del equipo de la
    iglesia que vaya a editar el contenido.
 
 Una vez aceptada la invitación, la persona puede entrar a
-`https://tu-sitio.netlify.app/admin/` con su correo y editar:
+`https://tu-sitio.netlify.app/admin/` y editar:
 
-- **Anuncios y Eventos** (con fecha, tipo y bandera *activo*)
-- **Cumpleaños del mes** (formato `15 de enero`)
-- **Necesidades de oración** (con bandera *activo*)
-- **Lectura de la semana** (versículo + reflexión bilingüe)
+- 🎂 **Cumpleaños** (con número de mes para auto-filtrado).
+- 🙏 **Necesidades de Oración** (ES + EN, bandera *activo*).
+- 📢 **Anuncios y Eventos** (tipo, fecha, imagen opcional).
+- 📖 **Lectura de la Semana** (versículo, referencia, reflexión).
 
-Cada cambio guardado en el panel se **commitea** automáticamente a
-`main`. Netlify detecta el push y redeploya el sitio en ~30 s.
+Cada cambio se commitea automáticamente a `main`; Netlify redeploya
+en ~30 s.
 
-> El repo necesita ser **público** para que `assets/js/contenido.js`
-> liste los archivos vía la GitHub Contents API. Si el repo es privado,
-> el contenido del CMS seguirá guardándose, pero no se mostrará en el
-> sitio hasta que se haga público o se reemplace la API por un
-> manifiesto generado en build time.
+---
+
+## ⚠️ IMPORTANTE: mantenimiento del manifiesto `data/index.json`
+
+El sitio es 100 % estático: sin backend que pueda *listar* las
+carpetas. `assets/js/contenido.js` aprende qué archivos JSON existen
+leyendo **`data/index.json`**, un manifiesto manual.
+
+Estructura:
+
+```json
+{
+  "cumpleanos": ["ejemplo-1.json", "ejemplo-2.json"],
+  "oracion": ["ejemplo-1.json", "ejemplo-2.json"],
+  "anuncios": ["ejemplo-1.json"],
+  "lectura": ["semana-actual.json"]
+}
+```
+
+**Cada vez que el panel CMS crea o elimina una entrada, hay que
+actualizar este archivo a mano** para que la web la vea. El flujo es:
+
+1. Crear/eliminar una entrada en `/admin/`.
+2. Abrir `data/index.json` en GitHub (botón ✏️).
+3. Añadir o quitar el nombre del archivo recién creado/eliminado en el
+   array correspondiente.
+4. Commit → Netlify redeploya → la web ya lo ve.
+
+Una entrada en CMS sin entrada correspondiente en `index.json` queda
+guardada pero invisible para el sitio.
+
+> Si más adelante se quiere automatizar este paso, basta con añadir un
+> script de Node que escanee `data/*` en cada build de Netlify y
+> regenere `index.json`. Por simplicidad, hoy se mantiene manual.
 
 ---
 
 ## Editar contenido sin el panel
 
-Si prefieres editar a mano (en GitHub o local):
-
 - Textos de la web → `assets/js/i18n.js` (claves ES + EN).
-- Datos del CMS → un archivo JSON por entrada en `data/<colección>/`.
-- Fotos de líderes → reemplaza `assets/img/lideres/<nombre>.jpg`
-  manteniendo dimensiones cuadradas.
+- Datos del CMS → uno o más JSON por carpeta en `data/<colección>/`
+  + actualizar `data/index.json`.
+- Fotos de líderes → `assets/img/lideres/<nombre>.jpg` (400×400).
+- Imágenes subidas por el panel → `assets/img/uploads/`.
 
 ---
 
@@ -87,23 +96,19 @@ No requiere build. Para previsualizar:
 
 ```bash
 python3 -m http.server 8080
-# o cualquier servidor estático que sirva la raíz
 ```
 
-Abre <http://localhost:8080>. Si quieres probar el formulario de
-contacto sin abrir tu cliente de correo, examina el `mailto:` generado
-con DevTools → Network → "Document".
+Abre <http://localhost:8080>.
 
 ---
 
-## Antes de pasar a producción
+## Antes de producción pública
 
-- Quita `<meta name="robots" content="noindex, nofollow">` de las 4
-  páginas para que Google indexe el sitio.
-- Considera mover `mailto:` a un servicio tipo Formspree o Netlify
-  Forms para no exponer el correo de la iglesia.
-- Para reforzar la seguridad a nivel HTTP (no solo meta), añade un
-  archivo `_headers` en la raíz con:
+- Quitar `<meta name="robots" content="noindex, nofollow">` de las
+  4 páginas para permitir indexado.
+- Considerar mover `mailto:` a Formspree o Netlify Forms para no
+  exponer el correo de la iglesia.
+- Añadir un archivo `_headers` en la raíz para reforzar a nivel HTTP:
   ```
   /*
     X-Content-Type-Options: nosniff

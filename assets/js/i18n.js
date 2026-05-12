@@ -49,8 +49,6 @@
       "prayer.anonymous": "Prefiero mantenerlo anónimo",
       "prayer.send": "Enviar petición",
       "prayer.note": "Tu petición llega solo al pastor. No se publica en el sitio.",
-      "prayer.verse": "Sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias.",
-      "prayer.verse_ref": "Filipenses 4:6",
       "prayer.needs_title": "Necesidades de oración esta semana",
       "prayer.need_1": "Por la salud de los hermanos y hermanas enfermos de la congregación.",
       "prayer.need_2": "Por los jóvenes que están iniciando su servicio en el ministerio.",
@@ -62,6 +60,14 @@
       "bulletin.reading": "Lectura de la semana",
       "bulletin.announcements": "Próximos anuncios",
       "bulletin.birthdays": "Cumpleaños del mes",
+
+      "cumpleanos.eyebrow": "🎂 Cumpleaños del mes",
+      "cumpleanos.title": "Celebramos juntos",
+      "cumpleanos.lead": "Si conoces a alguien de la congregación que cumple este mes y no aparece aquí, avísanos.",
+
+      "oracion.list_title": "Esta semana oramos por…",
+      "prayer.verse": "Oren en el Espíritu en todo momento.",
+      "prayer.verse_ref": "Efesios 6:18",
 
       "schedule.eyebrow": "Horarios",
       "schedule.title": "Nuestros cultos",
@@ -220,8 +226,6 @@
       "prayer.anonymous": "I prefer to remain anonymous",
       "prayer.send": "Send request",
       "prayer.note": "Your request goes only to the pastor. It is never published on the site.",
-      "prayer.verse": "In every situation, by prayer and petition, with thanksgiving, present your requests to God.",
-      "prayer.verse_ref": "Philippians 4:6",
       "prayer.needs_title": "Prayer needs this week",
       "prayer.need_1": "For the health of brothers and sisters in our congregation who are sick.",
       "prayer.need_2": "For the young people starting to serve in ministry.",
@@ -233,6 +237,14 @@
       "bulletin.reading": "Reading of the week",
       "bulletin.announcements": "Upcoming announcements",
       "bulletin.birthdays": "Birthdays this month",
+
+      "cumpleanos.eyebrow": "🎂 Birthdays this month",
+      "cumpleanos.title": "We celebrate together",
+      "cumpleanos.lead": "If you know someone from the congregation who is celebrating this month and isn't here, please let us know.",
+
+      "oracion.list_title": "This week we pray for…",
+      "prayer.verse": "Pray in the Spirit at all times.",
+      "prayer.verse_ref": "Ephesians 6:18",
 
       "schedule.eyebrow": "Schedule",
       "schedule.title": "Our services",
@@ -388,6 +400,7 @@
     });
 
     document.dispatchEvent(new CustomEvent("i18n:change", { detail: { lang } }));
+    document.dispatchEvent(new CustomEvent("langChange", { detail: { lang } }));
   };
 
   const setLang = (lang) => {

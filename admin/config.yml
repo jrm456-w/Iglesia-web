@@ -6,21 +6,51 @@ media_folder: assets/img/uploads
 public_folder: /assets/img/uploads
 locale: es
 
-# Los archivos se guardan como JSON para que assets/js/contenido.js los
-# consuma directamente sin necesidad de parsear YAML frontmatter.
+# Cada colección se guarda como JSON para que assets/js/contenido.js
+# pueda consumir los archivos directamente sin parsear YAML frontmatter.
+# Tras crear o eliminar entradas en el panel, recordar actualizar
+# data/index.json (el manifiesto que lista cada archivo por colección).
 collections:
 
+  - name: cumpleanos
+    label: "🎂 Cumpleaños"
+    folder: data/cumpleanos
+    extension: json
+    format: json
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Nombre completo, name: nombre, widget: string }
+      - { label: "Día y mes (ej: 15 de enero)", name: fecha, widget: string }
+      - { label: Mes número (1-12), name: mes, widget: number,
+          hint: "Para filtrar automáticamente el mes actual",
+          value_type: int, min: 1, max: 12 }
+      - { label: Foto (opcional), name: foto, widget: image, required: false }
+      - { label: Activo, name: activo, widget: boolean, default: true }
+
+  - name: oracion
+    label: "🙏 Necesidades de Oración"
+    folder: data/oracion
+    extension: json
+    format: json
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Necesidad (español), name: necesidad_es, widget: text }
+      - { label: Need (English), name: necesidad_en, widget: text }
+      - { label: Activo, name: activo, widget: boolean, default: true }
+
   - name: anuncios
-    label: Anuncios y Eventos
+    label: "📢 Anuncios y Eventos"
     folder: data/anuncios
     extension: json
     format: json
     create: true
     slug: "{{slug}}"
     fields:
-      - { label: Título, name: titulo_es, widget: string }
+      - { label: Título (español), name: titulo_es, widget: string }
       - { label: Title (English), name: titulo_en, widget: string }
-      - { label: Descripción, name: descripcion_es, widget: text }
+      - { label: Descripción (español), name: descripcion_es, widget: text }
       - { label: Description (English), name: descripcion_en, widget: text }
       - label: Tipo
         name: tipo
@@ -33,32 +63,8 @@ collections:
       - { label: Imagen (opcional), name: imagen, widget: image, required: false }
       - { label: Activo, name: activo, widget: boolean, default: true }
 
-  - name: cumpleanos
-    label: Cumpleaños del mes
-    folder: data/cumpleanos
-    extension: json
-    format: json
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: Nombre, name: nombre, widget: string }
-      - { label: Fecha (día/mes), name: fecha, widget: string, hint: "Ejemplo: 15 de enero" }
-      - { label: Foto (opcional), name: foto, widget: image, required: false }
-
-  - name: oracion
-    label: Necesidades de Oración
-    folder: data/oracion
-    extension: json
-    format: json
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: Necesidad, name: necesidad_es, widget: text }
-      - { label: Need (English), name: necesidad_en, widget: text }
-      - { label: Activo, name: activo, widget: boolean, default: true }
-
   - name: lectura
-    label: Lectura de la Semana
+    label: "📖 Lectura de la Semana"
     folder: data/lectura
     extension: json
     format: json
@@ -67,7 +73,8 @@ collections:
     fields:
       - { label: Versículo (español), name: versiculo_es, widget: text }
       - { label: Verse (English), name: versiculo_en, widget: text }
-      - { label: Referencia, name: referencia, widget: string, hint: "Ejemplo: Juan 3:16" }
+      - { label: Referencia, name: referencia, widget: string,
+          hint: "Ejemplo: Juan 3:16" }
       - { label: Reflexión (español), name: reflexion_es, widget: text }
       - { label: Reflection (English), name: reflexion_en, widget: text }
       - { label: Activo, name: activo, widget: boolean, default: true }
