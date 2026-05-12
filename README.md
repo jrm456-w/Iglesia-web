@@ -45,38 +45,26 @@ en ~30 s.
 
 ---
 
-## ⚠️ IMPORTANTE: mantenimiento del manifiesto `data/index.json`
+## Cómo descubre el sitio los archivos del CMS
 
-El sitio es 100 % estático: sin backend que pueda *listar* las
-carpetas. `assets/js/contenido.js` aprende qué archivos JSON existen
-leyendo **`data/index.json`**, un manifiesto manual.
+`assets/js/contenido.js` consulta la **GitHub Contents API**
+(`/repos/jrm456-w/Iglesia-web/contents/data/<carpeta>`) cada vez que
+carga una página, lista los archivos `.json` y los descarga vía
+`download_url` (raw.githubusercontent.com).
 
-Estructura:
+**Esto significa que cada entrada creada en el panel aparece
+automáticamente en el sitio** sin tocar manifiestos ni código.
 
-```json
-{
-  "cumpleanos": ["ejemplo-1.json", "ejemplo-2.json"],
-  "oracion": ["ejemplo-1.json", "ejemplo-2.json"],
-  "anuncios": ["ejemplo-1.json"],
-  "lectura": ["semana-actual.json"]
-}
-```
+### Requisitos
+- **El repositorio debe ser público** para que la API y los URLs raw
+  funcionen sin token.
+- Hay un *rate limit* de 60 peticiones por hora por IP sin
+  autenticación; suficiente para tráfico normal de iglesia.
 
-**Cada vez que el panel CMS crea o elimina una entrada, hay que
-actualizar este archivo a mano** para que la web la vea. El flujo es:
-
-1. Crear/eliminar una entrada en `/admin/`.
-2. Abrir `data/index.json` en GitHub (botón ✏️).
-3. Añadir o quitar el nombre del archivo recién creado/eliminado en el
-   array correspondiente.
-4. Commit → Netlify redeploya → la web ya lo ve.
-
-Una entrada en CMS sin entrada correspondiente en `index.json` queda
-guardada pero invisible para el sitio.
-
-> Si más adelante se quiere automatizar este paso, basta con añadir un
-> script de Node que escanee `data/*` en cada build de Netlify y
-> regenere `index.json`. Por simplicidad, hoy se mantiene manual.
+### Si el sitio queda privado
+Convierte el repo a público (Settings → General → Change visibility →
+Public). Mientras siga privado, las cards del sitio aparecerán vacías
+aunque el panel siga guardando los archivos.
 
 ---
 

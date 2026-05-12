@@ -1257,20 +1257,18 @@ p { margin: 0 0 1em; }
   gap: 0.85rem;
 }
 .prayer-needs-list li {
-  position: relative;
-  padding-left: 1.75rem;
+  padding: 0.5rem 0 0.5rem 1rem;
+  border-left: 3px solid var(--color-primary);
   color: var(--color-text);
   font-size: var(--fs-md);
   line-height: 1.55;
+  background: rgba(158, 27, 50, 0.03);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
-.prayer-needs-list li::before {
-  content: "✛";
-  position: absolute;
-  left: 0;
-  top: -0.05em;
-  color: var(--color-primary);
-  font-size: 1.25rem;
-  font-weight: 700;
+.prayer-needs-list li.empty-msg {
+  border-left-color: var(--color-border-strong);
+  font-style: italic;
+  background: transparent;
 }
 .prayer-needs-footnote {
   text-align: center;

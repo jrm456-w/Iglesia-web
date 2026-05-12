@@ -18,7 +18,7 @@ collections:
     extension: json
     format: json
     create: true
-    slug: "{{slug}}"
+    slug: "{{fields.nombre}}"
     fields:
       - { label: Nombre completo, name: nombre, widget: string }
       - { label: "Día y mes (ej: 15 de enero)", name: fecha, widget: string }
@@ -34,7 +34,7 @@ collections:
     extension: json
     format: json
     create: true
-    slug: "{{slug}}"
+    slug: "{{year}}-{{month}}-{{day}}-{{hour}}{{minute}}"
     fields:
       - { label: Necesidad (español), name: necesidad_es, widget: text }
       - { label: Need (English), name: necesidad_en, widget: text }
@@ -46,7 +46,7 @@ collections:
     extension: json
     format: json
     create: true
-    slug: "{{slug}}"
+    slug: "{{fields.fecha}}-{{fields.titulo_es}}"
     fields:
       - { label: Título (español), name: titulo_es, widget: string }
       - { label: Title (English), name: titulo_en, widget: string }
@@ -69,7 +69,7 @@ collections:
     extension: json
     format: json
     create: true
-    slug: "{{slug}}"
+    slug: "{{year}}-{{month}}-{{day}}"
     fields:
       - { label: Versículo (español), name: versiculo_es, widget: text }
       - { label: Verse (English), name: versiculo_en, widget: text }
