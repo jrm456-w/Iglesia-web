@@ -1312,24 +1312,18 @@ p { margin: 0 0 1em; }
   box-shadow: var(--shadow-md);
 }
 
-.birthday-photo {
-  width: 96px;
-  height: 96px;
+.cumpleanos-foto {
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--color-bg-alt);
-  box-shadow: var(--shadow-sm);
+  border: 3px solid #9E1B32;
 }
 
-.birthday-icon {
-  width: 96px;
-  height: 96px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-primary-soft);
-  border-radius: 50%;
-  font-size: 2.5rem;
+.cumpleanos-emoji {
+  font-size: 3rem;
+  display: block;
+  text-align: center;
   line-height: 1;
 }
 

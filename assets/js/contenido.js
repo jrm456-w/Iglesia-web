@@ -1,12 +1,19 @@
 /* ============================================================
    Iglesia De Cristo Gazcue — contenido.js
-   Lee dinámicamente las carpetas data/* del repositorio en
-   GitHub vía la Contents API. Así, cada archivo nuevo que
-   cree el panel CMS aparece en el sitio sin tocar manifiestos
-   ni código.
+   Lee dinámicamente las carpetas data/* del repo en GitHub
+   vía la Contents API. Cada archivo nuevo que cree el panel
+   CMS aparece en el sitio sin tocar código.
 
-   Seguridad: todo lo que entra al DOM va por textContent o
-   atributos controlados — nunca innerHTML con datos externos.
+   Seguridad: todo lo que entra al DOM se inserta con
+   textContent o atributos controlados — nunca innerHTML con
+   datos externos.
+
+   Fixes defensivos:
+   · activo === false es la única condición que excluye (los
+     archivos donde activo no exista se consideran activos).
+   · mes se compara con parseInt, así tolera string o número.
+   · resolverRutaFoto normaliza rutas absolutas/relativas y
+     img.onerror reemplaza la imagen rota por un emoji.
    ============================================================ */
 
 (function () {
@@ -43,6 +50,19 @@
     if (text !== undefined && text !== null) el.textContent = String(text);
     return el;
   };
+
+  /* ----- BUG 1: activo permisivo (excluye solo si === false) ----- */
+  const estaActivo = (item) => !item || item.activo !== false;
+
+  /* ----- BUG 3: normalizar la ruta de la foto ----- */
+  function resolverRutaFoto(foto) {
+    if (foto === undefined || foto === null) return null;
+    const v = String(foto).trim();
+    if (v === "") return null;
+    if (v.startsWith("http://") || v.startsWith("https://")) return v;
+    if (v.startsWith("/")) return v;
+    return "/" + v;
+  }
 
   /* ----- Listado y carga via GitHub Contents API ----- */
   async function listarArchivos(carpeta) {
@@ -100,10 +120,12 @@
     if (!target) return;
 
     const entries = await cargarCarpeta("cumpleanos");
-    const mes = new Date().getMonth() + 1;
+    const mesActual = new Date().getMonth() + 1;
     const lang = getLang();
+
+    // BUG 1 + BUG 2 aplicados.
     const list = entries
-      .filter((e) => e && e.activo === true && Number(e.mes) === mes)
+      .filter((e) => estaActivo(e) && parseInt(e.mes, 10) === mesActual)
       .sort((a, b) => parseDay(a.fecha) - parseDay(b.fecha));
 
     clear(target);
@@ -114,21 +136,30 @@
 
     list.forEach((b) => {
       const card = make("article", "birthday-card");
+      const rutaFoto = resolverRutaFoto(b.foto);
 
-      if (b.foto && String(b.foto).trim()) {
+      if (rutaFoto) {
         const img = document.createElement("img");
-        img.className = "birthday-photo";
-        img.src = b.foto;
-        img.alt = b.nombre || "";
+        img.className = "cumpleanos-foto";
+        img.src = rutaFoto;
+        img.alt = "Foto de " + (b.nombre || "");
         img.loading = "lazy";
-        img.width = 96;
-        img.height = 96;
+        img.width = 80;
+        img.height = 80;
+        // Si la imagen falla, la reemplazamos por el emoji para no romper el grid.
+        img.onerror = function () {
+          const emoji = document.createElement("span");
+          emoji.textContent = "🎂";
+          emoji.className = "cumpleanos-emoji";
+          emoji.setAttribute("aria-hidden", "true");
+          this.replaceWith(emoji);
+        };
         card.appendChild(img);
       } else {
-        const icon = make("span", "birthday-icon");
-        icon.textContent = "🎂";
-        icon.setAttribute("aria-hidden", "true");
-        card.appendChild(icon);
+        const emoji = make("span", "cumpleanos-emoji");
+        emoji.textContent = "🎂";
+        emoji.setAttribute("aria-hidden", "true");
+        card.appendChild(emoji);
       }
 
       card.appendChild(make("p", "birthday-name", b.nombre || ""));
@@ -143,7 +174,7 @@
     if (!target) return;
 
     const entries = await cargarCarpeta("oracion");
-    const active = entries.filter((e) => e && e.activo === true);
+    const active = entries.filter(estaActivo);
     const lang = getLang();
 
     clear(target);
@@ -168,7 +199,7 @@
 
     const entries = await cargarCarpeta("anuncios");
     const active = entries
-      .filter((e) => e && e.activo === true)
+      .filter(estaActivo)
       .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")));
     const lang = getLang();
 
@@ -205,7 +236,7 @@
     if (!target) return;
 
     const entries = await cargarCarpeta("lectura");
-    const active = entries.filter((e) => e && e.activo === true);
+    const active = entries.filter(estaActivo);
     if (!active.length) { clear(target); return; }
 
     const L = active[0];
@@ -234,8 +265,6 @@
     renderAll();
   }
 
-  // El usuario quiso window.addEventListener('langChange'); i18n.js
-  // dispara el evento en window y en document para compatibilidad.
   window.addEventListener("langChange", renderAll);
   document.addEventListener("i18n:change", renderAll);
 })();
