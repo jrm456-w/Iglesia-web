@@ -8,8 +8,8 @@ locale: es
 
 # Cada colección se guarda como JSON para que assets/js/contenido.js
 # pueda consumir los archivos directamente sin parsear YAML frontmatter.
-# Tras crear o eliminar entradas en el panel, recordar actualizar
-# data/index.json (el manifiesto que lista cada archivo por colección).
+# contenido.js descubre los archivos automáticamente vía GitHub Contents
+# API — el equipo NO tiene que mantener ningún manifiesto manual.
 collections:
 
   - name: cumpleanos
