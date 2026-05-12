@@ -1,28 +1,20 @@
 /* ============================================================
    Iglesia De Cristo Gazcue — contenido.js
-   Lee data/index.json (manifiesto) y luego cada archivo JSON
-   listado para renderizar cumpleaños, oración, anuncios y
-   lectura. No depende de backend — funciona sobre Netlify
-   estático.
+   Lee dinámicamente las carpetas data/* del repositorio en
+   GitHub vía la Contents API. Así, cada archivo nuevo que
+   cree el panel CMS aparece en el sitio sin tocar manifiestos
+   ni código.
 
-   Cada vez que el CMS crea/elimina una entrada, hay que
-   actualizar data/index.json (documentado en el README).
-
-   Seguridad: todas las inserciones al DOM usan textContent o
-   atributos seguros — no se usa innerHTML con datos externos.
+   Seguridad: todo lo que entra al DOM va por textContent o
+   atributos controlados — nunca innerHTML con datos externos.
    ============================================================ */
 
 (function () {
   "use strict";
 
-  const MANIFEST_URL = "data/index.json";
-
-  const FOLDERS = {
-    cumpleanos: "data/cumpleanos",
-    oracion: "data/oracion",
-    anuncios: "data/anuncios",
-    lectura: "data/lectura"
-  };
+  const REPO = "jrm456-w/Iglesia-web";
+  const BRANCH = "main";
+  const API = `https://api.github.com/repos/${REPO}/contents/data`;
 
   const TIPO_LABELS = {
     evento: { es: "Evento", en: "Event" },
@@ -52,41 +44,38 @@
     return el;
   };
 
-  /* ----- Carga del manifiesto y de las entradas ----- */
-  let manifestPromise = null;
-  const entriesCache = {};
-
-  const loadManifest = () => {
-    if (!manifestPromise) {
-      manifestPromise = fetch(MANIFEST_URL, { cache: "no-cache" })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((m) => (m && typeof m === "object" ? m : null))
-        .catch(() => null);
+  /* ----- Listado y carga via GitHub Contents API ----- */
+  async function listarArchivos(carpeta) {
+    try {
+      const res = await fetch(`${API}/${carpeta}?ref=${BRANCH}`, {
+        headers: { Accept: "application/vnd.github+json" }
+      });
+      if (!res.ok) return [];
+      const archivos = await res.json();
+      if (!Array.isArray(archivos)) return [];
+      return archivos
+        .filter((f) => f && f.type === "file" && typeof f.name === "string" && f.name.endsWith(".json") && f.download_url)
+        .map((f) => f.download_url);
+    } catch {
+      return [];
     }
-    return manifestPromise;
-  };
+  }
 
-  async function loadEntries(type) {
-    if (entriesCache[type]) return entriesCache[type];
-    const manifest = await loadManifest();
-    if (!manifest || !Array.isArray(manifest[type])) return [];
-    const folder = FOLDERS[type];
-    if (!folder) return [];
+  async function fetchJSON(url) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data && typeof data === "object" ? data : null;
+    } catch {
+      return null;
+    }
+  }
 
-    const files = manifest[type].filter((f) => typeof f === "string" && f.endsWith(".json"));
-    const results = await Promise.all(
-      files.map(async (name) => {
-        try {
-          const r = await fetch(`${folder}/${encodeURIComponent(name)}`, { cache: "no-cache" });
-          if (!r.ok) return null;
-          const data = await r.json();
-          return data && typeof data === "object" ? data : null;
-        } catch { return null; }
-      })
-    );
-    const entries = results.filter(Boolean);
-    entriesCache[type] = entries;
-    return entries;
+  async function cargarCarpeta(nombre) {
+    const urls = await listarArchivos(nombre);
+    const docs = await Promise.all(urls.map(fetchJSON));
+    return docs.filter(Boolean);
   }
 
   /* ----- Helpers ----- */
@@ -105,13 +94,13 @@
     } catch { return iso; }
   };
 
-  /* ----- Renderers ----- */
+  /* ----- 1. Cumpleaños del mes ----- */
   async function cargarCumpleanos() {
     const target = document.getElementById("seccion-cumpleanos");
     if (!target) return;
 
-    const entries = await loadEntries("cumpleanos");
-    const mes = new Date().getMonth() + 1; // 1-12
+    const entries = await cargarCarpeta("cumpleanos");
+    const mes = new Date().getMonth() + 1;
     const lang = getLang();
     const list = entries
       .filter((e) => e && e.activo === true && Number(e.mes) === mes)
@@ -148,11 +137,12 @@
     });
   }
 
+  /* ----- 2. Necesidades de oración ----- */
   async function cargarOracion() {
     const target = document.getElementById("lista-oracion");
     if (!target) return;
 
-    const entries = await loadEntries("oracion");
+    const entries = await cargarCarpeta("oracion");
     const active = entries.filter((e) => e && e.activo === true);
     const lang = getLang();
 
@@ -171,11 +161,12 @@
     });
   }
 
+  /* ----- 3. Anuncios y eventos ----- */
   async function cargarAnuncios() {
     const target = document.getElementById("seccion-anuncios");
     if (!target) return;
 
-    const entries = await loadEntries("anuncios");
+    const entries = await cargarCarpeta("anuncios");
     const active = entries
       .filter((e) => e && e.activo === true)
       .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")));
@@ -208,13 +199,15 @@
     });
   }
 
+  /* ----- 4. Lectura de la semana ----- */
   async function cargarLectura() {
     const target = document.getElementById("seccion-lectura");
     if (!target) return;
 
-    const entries = await loadEntries("lectura");
+    const entries = await cargarCarpeta("lectura");
     const active = entries.filter((e) => e && e.activo === true);
     if (!active.length) { clear(target); return; }
+
     const L = active[0];
     const lang = getLang();
 
@@ -235,7 +228,14 @@
     cargarLectura();
   };
 
-  renderAll();
-  document.addEventListener("langChange", renderAll);
-  document.addEventListener("i18n:change", renderAll); // compatibilidad
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderAll);
+  } else {
+    renderAll();
+  }
+
+  // El usuario quiso window.addEventListener('langChange'); i18n.js
+  // dispara el evento en window y en document para compatibilidad.
+  window.addEventListener("langChange", renderAll);
+  document.addEventListener("i18n:change", renderAll);
 })();

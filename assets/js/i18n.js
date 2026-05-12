@@ -399,8 +399,11 @@
       btn.setAttribute("aria-pressed", String(isActive));
     });
 
-    document.dispatchEvent(new CustomEvent("i18n:change", { detail: { lang } }));
-    document.dispatchEvent(new CustomEvent("langChange", { detail: { lang } }));
+    const detail = { lang };
+    document.dispatchEvent(new CustomEvent("i18n:change", { detail }));
+    document.dispatchEvent(new CustomEvent("langChange", { detail }));
+    // window dispatch para que contenido.js pueda usar window.addEventListener
+    window.dispatchEvent(new CustomEvent("langChange", { detail }));
   };
 
   const setLang = (lang) => {
