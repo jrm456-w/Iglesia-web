@@ -1288,60 +1288,188 @@ p { margin: 0 0 1em; }
 /* -------- 22. Sección Cumpleaños del mes (driven por CMS) -------- */
 .section-birthdays { background: var(--color-bg-alt); }
 
-.birthday-grid {
+.cumpleanos-grid {
   display: grid;
-  gap: 1.25rem;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  margin-top: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+@media (min-width: 600px) {
+  .cumpleanos-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 960px) {
+  .cumpleanos-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-.birthday-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 1.5rem 1rem;
+.cumpleanos-card {
   text-align: center;
+  padding: 1.5rem 1rem;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: transform var(--transition), box-shadow var(--transition);
 }
-.birthday-card:hover {
+.cumpleanos-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
 .cumpleanos-foto {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #9E1B32;
+  display: block;
+  margin: 0 auto 0.75rem;
 }
 
 .cumpleanos-emoji {
-  font-size: 3rem;
+  font-size: 3.5rem;
   display: block;
-  text-align: center;
+  margin: 0 auto 0.75rem;
   line-height: 1;
 }
 
-.birthday-name {
-  margin: 0;
+.cumpleanos-nombre {
   font-family: var(--font-serif);
-  font-size: var(--fs-md);
   font-weight: 700;
+  margin: 0 0 0.25rem;
+  font-size: var(--fs-md);
   color: var(--color-text);
 }
 
-.birthday-date {
+.cumpleanos-fecha {
+  color: #9E1B32;
+  font-size: 0.9rem;
   margin: 0;
-  color: var(--color-primary);
-  font-size: var(--fs-sm);
   font-weight: 500;
 }
 
+.cumpleanos-vacio {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--fs-md);
+  padding: 2rem 0;
+  margin: 0;
+}
+
+/* Lista de necesidades de oración (driven por CMS) */
+.oracion-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.oracion-lista li {
+  padding: 0.85rem 1rem;
+  border-left: 4px solid #9E1B32;
+  background: #FAF6F1;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+/* Versículo de la semana (driven por CMS) */
+.lectura-versiculo {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 0 auto 1rem;
+  max-width: 680px;
+  line-height: 1.5;
+  color: var(--color-text);
+  quotes: "“" "”";
+}
+.lectura-versiculo::before { content: open-quote; color: var(--color-primary); margin-right: 0.1em; }
+.lectura-versiculo::after { content: close-quote; color: var(--color-primary); margin-left: 0.1em; }
+
+.lectura-referencia {
+  display: block;
+  color: #9E1B32;
+  text-align: center;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+  margin-bottom: 1rem;
+}
+
+.lectura-reflexion {
+  font-size: var(--fs-md);
+  color: var(--color-text-muted);
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* Grid de anuncios (driven por CMS) */
+.anuncios-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 600px) {
+  .anuncios-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 960px) {
+  .anuncios-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.anuncio-card {
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.anuncio-badge {
+  color: var(--color-white);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+  align-self: flex-start;
+  text-transform: capitalize;
+  letter-spacing: 0.04em;
+}
+
+.anuncio-titulo {
+  font-family: var(--font-serif);
+  font-size: var(--fs-lg);
+  margin: 0;
+  color: var(--color-text);
+}
+
+.anuncio-desc {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+}
+
+/* CTA dentro de sección oración en index */
+.oracion-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.75rem;
+}
+
+/* Ocultar widget de Netlify Identity en páginas públicas:
+   el panel /admin/ tiene su propia HTML sin styles.css. */
+[data-netlify-identity-button],
+.netlify-identity-widget-overlay {
+  display: none !important;
+}
+
+/* Mensaje genérico de estado vacío (legacy, conservado por si reaparece) */
 .empty-msg {
   grid-column: 1 / -1;
   text-align: center;

@@ -68,19 +68,37 @@
   const siteNav = document.getElementById("site-nav");
 
   if (navToggle && siteNav) {
-    navToggle.addEventListener("click", () => {
+    const closeNav = () => {
+      siteNav.classList.remove("is-open");
+      navToggle.setAttribute("aria-expanded", "false");
+      navToggle.setAttribute("aria-label", "Abrir menú");
+      document.body.style.overflow = "";
+    };
+
+    navToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
       const isOpen = siteNav.classList.toggle("is-open");
       navToggle.setAttribute("aria-expanded", String(isOpen));
       navToggle.setAttribute("aria-label", isOpen ? "Cerrar menú" : "Abrir menú");
       document.body.style.overflow = isOpen ? "hidden" : "";
     });
 
+    // Cerrar al clicar cualquier enlace del nav.
     siteNav.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        siteNav.classList.remove("is-open");
-        navToggle.setAttribute("aria-expanded", "false");
-        document.body.style.overflow = "";
-      });
+      link.addEventListener("click", closeNav);
+    });
+
+    // Cerrar al clicar fuera del nav (defensivo, mejor UX en móvil).
+    document.addEventListener("click", (e) => {
+      if (!siteNav.classList.contains("is-open")) return;
+      const insideNav = siteNav.contains(e.target);
+      const insideToggle = navToggle.contains(e.target);
+      if (!insideNav && !insideToggle) closeNav();
+    });
+
+    // Cerrar con Escape.
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && siteNav.classList.contains("is-open")) closeNav();
     });
   }
 
