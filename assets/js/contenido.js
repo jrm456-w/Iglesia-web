@@ -82,22 +82,70 @@
       if (!Array.isArray(archivos)) return [];
       return archivos
         .filter((f) => f && f.type === "file" && typeof f.name === "string" && f.name.endsWith(".json") && f.path)
-        .map((f) => f.path);
+        .map((f) => ({ path: f.path, api_url: f.url || null, download_url: f.download_url || null }));
     } catch {
       return [];
     }
   }
 
-  // Fetch del JSON desde el dominio actual (Netlify lo sirve junto al sitio).
-  async function fetchJSON(path) {
-    try {
-      const res = await fetch(path, { cache: "no-cache" });
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data && typeof data === "object" ? data : null;
-    } catch {
-      return null;
+  // Fetch del JSON: intenta same-origin primero; si falla, usa GitHub Contents API.
+  async function fetchJSON(source) {
+    const pathRaw = source && typeof source === "object" ? source.path : source;
+    const path = typeof pathRaw === "string" ? pathRaw.trim() : "";
+    const apiURLRaw = source && typeof source === "object" ? source.api_url : null;
+    const apiURL = typeof apiURLRaw === "string" ? apiURLRaw.trim() : "";
+    const downloadURLRaw = source && typeof source === "object" ? source.download_url : null;
+    const downloadURL = typeof downloadURLRaw === "string" ? downloadURLRaw.trim() : "";
+
+    const candidatos = [];
+    if (path) {
+      candidatos.push(path);
+      if (!path.startsWith("/")) candidatos.push("/" + path);
     }
+
+    for (const url of candidatos) {
+      try {
+        const res = await fetch(url, { cache: "no-cache" });
+        if (!res.ok) continue;
+        const data = await res.json();
+        if (data && typeof data === "object") return data;
+      } catch {
+        // sigue al siguiente candidato
+      }
+    }
+
+    if (apiURL) {
+      try {
+        const res = await fetch(`${apiURL}?ref=${BRANCH}`, {
+          headers: { Accept: "application/vnd.github+json" },
+          cache: "no-cache"
+        });
+        if (res.ok) {
+          const payload = await res.json();
+          if (payload && typeof payload.content === "string") {
+            const decoded = atob(payload.content.replace(/\n/g, ""));
+            const data = JSON.parse(decoded);
+            if (data && typeof data === "object") return data;
+          }
+        }
+      } catch {
+        // noop
+      }
+    }
+
+    if (downloadURL) {
+      try {
+        const res = await fetch(downloadURL, { cache: "no-cache" });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === "object") return data;
+        }
+      } catch {
+        // noop
+      }
+    }
+
+    return null;
   }
 
   // Caché por carpeta para evitar repetir fetch en cada cambio de idioma.
