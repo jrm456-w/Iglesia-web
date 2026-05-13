@@ -1,6 +1,6 @@
 backend:
   name: git-gateway
-  branch: main
+  branch: claude/church-website-builder-LTHxX
 
 media_folder: assets/img/uploads
 public_folder: /assets/img/uploads
