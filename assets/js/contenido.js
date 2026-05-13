@@ -67,17 +67,27 @@
     return "/" + v;
   }
 
+  // Helper: detectar localhost para logging de diagnóstico solo en
+  // desarrollo. En producción la consola queda limpia.
+  const isLocalhost = () => {
+    const h = (window.location && window.location.hostname) || "";
+    return h === "localhost" || h === "127.0.0.1" || h === "" || h.endsWith(".local");
+  };
+  const debug = (...args) => { if (isLocalhost()) console.log("[contenido]", ...args); };
+
   // Lista los .json de una carpeta usando la GitHub Contents API.
-  // Devuelve metadata con path local y fallback remoto (download_url).
-  // Caso de uso: si GitHub ya tiene un archivo nuevo pero Netlify aún no
-  // termina de desplegarlo, el fetch local puede responder 404. En ese caso
-  // intentamos download_url como fallback para evitar "huecos" de contenido.
+  // Devuelve metadata con path local (relativo y absoluto same-origin)
+  // y fallback remoto (download_url). Aplica trim() defensivo por si la
+  // API devuelve whitespace.
+  // Caso de uso del fallback: si GitHub ya tiene un archivo nuevo pero
+  // Netlify aún no termina de desplegarlo, el fetch local responde 404 y
+  // se intenta download_url para evitar "huecos" de contenido.
   async function listarArchivos(carpeta) {
     try {
       const res = await fetch(`${API}/${carpeta}?ref=${BRANCH}`, {
         headers: { Accept: "application/vnd.github+json" }
       });
-      if (!res.ok) return [];
+      if (!res.ok) { debug("listarArchivos !ok", carpeta, res.status); return []; }
       const archivos = await res.json();
       if (!Array.isArray(archivos)) return [];
       return archivos
@@ -89,40 +99,44 @@
           typeof f.path === "string"
         )
         .map((f) => ({
-          path: f.path,
-          downloadUrl: typeof f.download_url === "string" ? f.download_url : null
-        }));
-    } catch {
+          path: f.path.trim(),
+          downloadUrl: typeof f.download_url === "string" ? f.download_url.trim() : null
+        }))
+        .filter((e) => e.path);
+    } catch (err) {
+      debug("listarArchivos error", carpeta, err);
       return [];
     }
   }
 
-  // Fetch del JSON con estrategia:
-  // 1) path local (más rápido y mismo-origen)
-  // 2) download_url remoto (fallback si local aún no está en deploy)
+  // Fetch del JSON con estrategia de fallback explícita:
+  //   1) relativo (data/oracion/x.json)        — resuelto contra el doc
+  //   2) absoluto same-origin (/data/...)      — fallback si la base URL
+  //                                              relativa no aplica
+  //   3) remoto download_url (raw.github)      — última red de seguridad
+  // El primero que responda 200 gana. Errores se silencian a la consola
+  // (solo se loguean en localhost).
   async function fetchJSON(entry) {
-    const path = entry && typeof entry.path === "string" ? entry.path : null;
-    const downloadUrl = entry && typeof entry.downloadUrl === "string" ? entry.downloadUrl : null;
-    if (!path) return null;
+    if (!entry || !entry.path) return null;
+    const relativo = entry.path.replace(/^\/+/, "");
+    const candidatos = [
+      relativo,                 // relativo
+      "/" + relativo,           // absoluto same-origin
+    ];
+    if (entry.downloadUrl) candidatos.push(entry.downloadUrl); // remoto
 
-    try {
-      const res = await fetch(path, { cache: "no-cache" });
-      if (res.ok) {
+    for (const url of candidatos) {
+      try {
+        const res = await fetch(url, { cache: "no-cache" });
+        if (!res.ok) { debug("fetchJSON !ok", res.status, url); continue; }
         const data = await res.json();
-        return data && typeof data === "object" ? data : null;
+        if (data && typeof data === "object") return data;
+      } catch (err) {
+        debug("fetchJSON error", url, err);
       }
-    } catch { /* fallback abajo */ }
-
-    if (!downloadUrl) return null;
-
-    try {
-      const resFallback = await fetch(downloadUrl, { cache: "no-cache" });
-      if (!resFallback.ok) return null;
-      const dataFallback = await resFallback.json();
-      return dataFallback && typeof dataFallback === "object" ? dataFallback : null;
-    } catch {
-      return null;
     }
+    debug("fetchJSON ALL failed", entry.path);
+    return null;
   }
 
   // Caché por carpeta para evitar repetir fetch en cada cambio de idioma.
