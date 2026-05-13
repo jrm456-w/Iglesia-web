@@ -91,7 +91,8 @@
   // Fetch del JSON desde el dominio actual (Netlify lo sirve junto al sitio).
   async function fetchJSON(path) {
     try {
-      const res = await fetch(path, { cache: "no-cache" });
+      const url = path.startsWith("/") ? path : "/" + path;
+      const res = await fetch(url, { cache: "no-cache" });
       if (!res.ok) return null;
       const data = await res.json();
       return data && typeof data === "object" ? data : null;
@@ -127,11 +128,11 @@
   async function cargarCumpleanos() {
     const el = document.getElementById("seccion-cumpleanos");
     if (!el) return;
-    el.innerHTML = "";
-    mostrarSeccion(el);
 
     const mesActual = new Date().getMonth() + 1;
     const todos = await loadCarpeta("cumpleanos");
+    el.replaceChildren();
+    mostrarSeccion(el);
     const filtrados = todos.filter((item) =>
       item && item.activo !== false && parseInt(item.mes, 10) === mesActual
     );
@@ -196,9 +197,9 @@
   async function cargarOracion() {
     const el = document.getElementById("lista-oracion");
     if (!el) return;
-    el.innerHTML = "";
 
     const todos = await loadCarpeta("oracion");
+    el.replaceChildren();
     const activos = todos.filter((item) => item && item.activo !== false);
 
     if (activos.length === 0) {
@@ -221,9 +222,9 @@
   async function cargarLectura() {
     const el = document.getElementById("seccion-lectura");
     if (!el) return;
-    el.innerHTML = "";
 
     const todos = await loadCarpeta("lectura");
+    el.replaceChildren();
     const activo = todos.find((item) => item && item.activo !== false);
 
     if (!activo) {
@@ -257,9 +258,9 @@
   async function cargarAnuncios() {
     const el = document.getElementById("seccion-anuncios");
     if (!el) return;
-    el.innerHTML = "";
 
     const todos = await loadCarpeta("anuncios");
+    el.replaceChildren();
     const activos = todos
       .filter((item) => item && item.activo !== false)
       .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")));
