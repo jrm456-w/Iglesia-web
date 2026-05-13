@@ -23,7 +23,10 @@
   "use strict";
 
   const REPO = "jrm456-w/Iglesia-web";
-  const BRANCH = "main";
+  // Rama de la que se listan los archivos del CMS vía GitHub Contents
+  // API. Debe coincidir con la rama configurada en admin/config.yml
+  // (backend.branch) y con la rama de producción de Netlify.
+  const BRANCH = "claude/church-website-builder-LTHxX";
   const API = `https://api.github.com/repos/${REPO}/contents/data`;
 
   const COLORES_BADGE = {

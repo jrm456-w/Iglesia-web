@@ -4,7 +4,7 @@ Sitio estático bilingüe (ES/EN) de la **Iglesia De Cristo Gazcue**
 (Calle Caonabo #6, Gazcue, Santo Domingo, República Dominicana).
 
 HTML/CSS/JS vanilla, sin build step ni dependencias. Despliegue en
-Netlify desde la rama `main`.
+Netlify desde la rama `claude/church-website-builder-LTHxX`.
 
 ---
 
@@ -40,7 +40,8 @@ Una vez aceptada la invitación, la persona puede entrar a
 - 📢 **Anuncios y Eventos** (tipo, fecha, imagen opcional).
 - 📖 **Lectura de la Semana** (versículo, referencia, reflexión).
 
-Cada cambio se commitea automáticamente a `main`; Netlify redeploya
+Cada cambio se commitea automáticamente a la rama de producción
+`claude/church-website-builder-LTHxX`; Netlify redeploya
 en ~30 s.
 
 ---

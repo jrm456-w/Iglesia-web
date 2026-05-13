@@ -2,8 +2,15 @@
 
 Eres el asistente de desarrollo del sitio web de la
 **Iglesia De Cristo Gazcue**.
-Repositorio: `jrm456-w/Iglesia-web` (público, deploy automático en
-Netlify desde la rama `main`).
+Repositorio: `jrm456-w/Iglesia-web` (público).
+
+**Rama de producción Netlify:** `claude/church-website-builder-LTHxX`
+(Netlify deploya desde aquí — NO desde `main`).
+**Rama donde commitea el panel CMS:** la misma
+(`backend.branch` en `admin/config.yml` y `BRANCH` en
+`assets/js/contenido.js` deben coincidir).
+**Rol de `main`:** archivo / integración esporádica. No es la rama
+viva del sitio.
 
 ---
 
@@ -57,9 +64,13 @@ que aprobar el merge final.**
 
 ### 1. Rama de trabajo
 - **NUNCA** edites `main` directamente.
-- Crea tu propia rama con el patrón `codex/<descripcion-corta>`.
-  Ejemplo: `git checkout -b codex/fix-cumple-junio`
-- Si la rama ya existe en remoto, haz checkout y trabaja sobre ella.
+- La rama de producción es
+  `claude/church-website-builder-LTHxX` (Netlify deploya desde aquí).
+- Para cambios menores acordados con el usuario, podés pushear
+  directo a la rama de producción.
+- Para cambios mayores, crea tu propia rama
+  `codex/<descripcion-corta>` y abre PR contra
+  `claude/church-website-builder-LTHxX` (no contra `main`).
 
 ### 2. Edición de archivos
 - Usa las herramientas del entorno (Edit/Write/sed, según tengas).
@@ -141,7 +152,7 @@ Preferí **GitHub MCP** si está disponible:
 mcp__github__create_pull_request
   owner: jrm456-w
   repo: iglesia-web
-  base: main
+  base: claude/church-website-builder-LTHxX
   head: <tu-rama>
   title: "tipo: descripción corta"
   body: |
@@ -157,7 +168,7 @@ Si no tienes MCP, usa `gh` CLI:
 
 ```bash
 gh pr create \
-  --base main \
+  --base claude/church-website-builder-LTHxX \
   --head <tu-rama> \
   --title "tipo: descripción" \
   --body "## Resumen
@@ -166,7 +177,7 @@ gh pr create \
 ```
 
 Reporta al usuario:
-> "PR creado: <URL>. ¿Mergeo a `main`?"
+> "PR creado: <URL>. ¿Mergeo a la rama de producción?"
 
 ### 7. Esperar confirmación humana
 **NUNCA** mergees sin que el usuario responda explícitamente con:
@@ -199,18 +210,19 @@ usuario lo pida.
 ### 9. Sincronizar local
 ```bash
 git fetch origin
-git branch -f main origin/main
+git branch -f claude/church-website-builder-LTHxX \
+  origin/claude/church-website-builder-LTHxX
 git checkout <tu-rama-feature>  # o queda donde estabas
 ```
 
 ### 10. Reportar
-> "Mergeado a main como `<sha>`. Netlify deployará en 30-60 s."
+> "Mergeado a rama de producción como `<sha>`. Netlify deployará en 30-60 s."
 
 ---
 
 ## ⛔ Reglas duras (siempre, en cualquier modo)
 
-- 🚫 Nunca push directo a `main`.
+- 🚫 Nunca push directo a `main` (no es producción aquí).
 - 🚫 Nunca `--force`, `--amend`, `--no-verify`, `--no-gpg-sign`.
 - 🚫 Nunca merge sin confirmación humana explícita.
 - 🚫 Nunca añadas frameworks, bundlers ni dependencias npm/yarn.
@@ -221,7 +233,10 @@ git checkout <tu-rama-feature>  # o queda donde estabas
   `html.parser`, `yaml`).
 - ✅ Siempre mensajes de commit en español explicando el "por qué".
 - ✅ Siempre un commit por cambio lógico, con mensaje descriptivo.
-- ✅ Siempre pregunta antes de merge a `main`.
+- ✅ Siempre pregunta antes de merge a la rama de producción.
+- ✅ Si cambia la rama de producción, `BRANCH` en
+  `assets/js/contenido.js` y `backend.branch` en
+  `admin/config.yml` deben ajustarse en el mismo commit.
 
 ---
 
