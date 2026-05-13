@@ -68,10 +68,10 @@
   }
 
   // Lista los .json de una carpeta usando la GitHub Contents API.
-  // Devuelve PATHS LOCALES (ej. "data/oracion/x.json") para luego hacer
-  // fetch mismo-origen contra Netlify — evita el cert SSL externo de
-  // raw.githubusercontent.com (que en algunas redes corporativas se
-  // intercepta y rompe con ERR_CERT_AUTHORITY_INVALID).
+  // Devuelve metadata con path local y fallback remoto (download_url).
+  // Caso de uso: si GitHub ya tiene un archivo nuevo pero Netlify aún no
+  // termina de desplegarlo, el fetch local puede responder 404. En ese caso
+  // intentamos download_url como fallback para evitar "huecos" de contenido.
   async function listarArchivos(carpeta) {
     try {
       const res = await fetch(`${API}/${carpeta}?ref=${BRANCH}`, {
@@ -81,20 +81,45 @@
       const archivos = await res.json();
       if (!Array.isArray(archivos)) return [];
       return archivos
-        .filter((f) => f && f.type === "file" && typeof f.name === "string" && f.name.endsWith(".json") && f.path)
-        .map((f) => f.path);
+        .filter((f) =>
+          f &&
+          f.type === "file" &&
+          typeof f.name === "string" &&
+          f.name.endsWith(".json") &&
+          typeof f.path === "string"
+        )
+        .map((f) => ({
+          path: f.path,
+          downloadUrl: typeof f.download_url === "string" ? f.download_url : null
+        }));
     } catch {
       return [];
     }
   }
 
-  // Fetch del JSON desde el dominio actual (Netlify lo sirve junto al sitio).
-  async function fetchJSON(path) {
+  // Fetch del JSON con estrategia:
+  // 1) path local (más rápido y mismo-origen)
+  // 2) download_url remoto (fallback si local aún no está en deploy)
+  async function fetchJSON(entry) {
+    const path = entry && typeof entry.path === "string" ? entry.path : null;
+    const downloadUrl = entry && typeof entry.downloadUrl === "string" ? entry.downloadUrl : null;
+    if (!path) return null;
+
     try {
       const res = await fetch(path, { cache: "no-cache" });
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data && typeof data === "object" ? data : null;
+      if (res.ok) {
+        const data = await res.json();
+        return data && typeof data === "object" ? data : null;
+      }
+    } catch { /* fallback abajo */ }
+
+    if (!downloadUrl) return null;
+
+    try {
+      const resFallback = await fetch(downloadUrl, { cache: "no-cache" });
+      if (!resFallback.ok) return null;
+      const dataFallback = await resFallback.json();
+      return dataFallback && typeof dataFallback === "object" ? dataFallback : null;
     } catch {
       return null;
     }
