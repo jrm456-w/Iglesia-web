@@ -87,15 +87,23 @@
   //                   JSON. Funciona en redes que bloquean raw.gh.
   //   · downloadUrl — raw.githubusercontent.com; último recurso.
   // Aplica trim() defensivo por si la API devuelve whitespace.
-  async function listarArchivos(carpeta) {
+  async function listarArchivos(carpeta, intento) {
+    intento = intento || 0;
     try {
       const res = await fetch(`${API}/${carpeta}?ref=${BRANCH}`, {
         headers: { Accept: "application/vnd.github+json" }
       });
-      if (!res.ok) { debug("listarArchivos !ok", carpeta, res.status); return []; }
+      // Reintento defensivo en errores 5xx transitorios (no en 403 de
+      // rate limit, que no se cura esperando 2s).
+      if (res.status >= 500 && res.status < 600 && intento === 0) {
+        debug("listarArchivos 5xx, reintentando", carpeta, res.status);
+        await new Promise((r) => setTimeout(r, 2000));
+        return listarArchivos(carpeta, 1);
+      }
+      if (!res.ok) { debug("listarArchivos !ok", carpeta, res.status); return { ok: false, entries: [] }; }
       const archivos = await res.json();
-      if (!Array.isArray(archivos)) return [];
-      return archivos
+      if (!Array.isArray(archivos)) return { ok: false, entries: [] };
+      const entries = archivos
         .filter((f) =>
           f &&
           f.type === "file" &&
@@ -110,9 +118,10 @@
           downloadUrl: typeof f.download_url === "string" ? f.download_url.trim() : null
         }))
         .filter((e) => e.path);
+      return { ok: true, entries };
     } catch (err) {
       debug("listarArchivos error", carpeta, err);
-      return [];
+      return { ok: false, entries: [] };
     }
   }
 
@@ -243,13 +252,16 @@
   }
 
   // Caché por carpeta para evitar repetir fetch en cada cambio de idioma.
+  // Devuelve { ok, docs }: ok=false significa que la API listing falló
+  // (rate limit, red, etc.), distinto de docs vacío por filtro.
   const cache = {};
   function loadCarpeta(carpeta) {
     if (!cache[carpeta]) {
       cache[carpeta] = (async () => {
-        const urls = await listarArchivos(carpeta);
-        const docs = await Promise.all(urls.map(fetchJSON));
-        return docs.filter(Boolean);
+        const res = await listarArchivos(carpeta);
+        if (!res.ok) return { ok: false, docs: [] };
+        const docs = await Promise.all(res.entries.map(fetchJSON));
+        return { ok: true, docs: docs.filter(Boolean) };
       })();
     }
     return cache[carpeta];
@@ -272,18 +284,37 @@
     el.innerHTML = "";
     mostrarSeccion(el);
 
-    const mesActual = new Date().getMonth() + 1;
-    const todos = await loadCarpeta("cumpleanos");
-    const filtrados = todos.filter((item) =>
+    const ahora = new Date();
+    const mesActual = ahora.getMonth() + 1;
+    const lang = getLang();
+    const nombreMes = ahora.toLocaleDateString(
+      lang === "en" ? "en-US" : "es-DO",
+      { month: "long" }
+    );
+    const res = await loadCarpeta("cumpleanos");
+
+    // Caso "API no respondió": no engañar al usuario diciendo que no
+    // hay datos cuando solo es un problema de red/rate limit.
+    if (!res.ok) {
+      const msg = document.createElement("p");
+      msg.className = "cumpleanos-vacio";
+      msg.textContent = lang === "en"
+        ? "Couldn't load birthdays right now. Please try again in a few minutes."
+        : "No se pudieron cargar los cumpleaños ahora. Intenta de nuevo en unos minutos.";
+      el.appendChild(msg);
+      return;
+    }
+
+    const filtrados = res.docs.filter((item) =>
       item && item.activo !== false && parseInt(item.mes, 10) === mesActual
     );
 
     if (filtrados.length === 0) {
       const msg = document.createElement("p");
       msg.className = "cumpleanos-vacio";
-      msg.textContent = getLang() === "en"
-        ? "No birthdays this month."
-        : "No hay cumpleaños este mes.";
+      msg.textContent = lang === "en"
+        ? `No birthdays in ${nombreMes}.`
+        : `No hay cumpleaños en ${nombreMes}.`;
       el.appendChild(msg);
       return;
     }
@@ -340,8 +371,9 @@
     if (!el) return;
     el.innerHTML = "";
 
-    const todos = await loadCarpeta("oracion");
-    const activos = todos.filter((item) => item && item.activo !== false);
+    const res = await loadCarpeta("oracion");
+    if (!res.ok) { ocultarSeccion(el); return; }
+    const activos = res.docs.filter((item) => item && item.activo !== false);
 
     if (activos.length === 0) {
       ocultarSeccion(el);
@@ -365,8 +397,9 @@
     if (!el) return;
     el.innerHTML = "";
 
-    const todos = await loadCarpeta("lectura");
-    const activo = todos.find((item) => item && item.activo !== false);
+    const res = await loadCarpeta("lectura");
+    if (!res.ok) { ocultarSeccion(el); return; }
+    const activo = res.docs.find((item) => item && item.activo !== false);
 
     if (!activo) {
       ocultarSeccion(el);
@@ -401,8 +434,9 @@
     if (!el) return;
     el.innerHTML = "";
 
-    const todos = await loadCarpeta("anuncios");
-    const activos = todos
+    const res = await loadCarpeta("anuncios");
+    if (!res.ok) { ocultarSeccion(el); return; }
+    const activos = res.docs
       .filter((item) => item && item.activo !== false)
       .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")));
 
