@@ -85,8 +85,24 @@
     const nameInput = contactForm.querySelector("#c-name");
     const emailInput = contactForm.querySelector("#c-email");
     const messageInput = contactForm.querySelector("#c-message");
+    const whatsappWrap = document.getElementById("campo-whatsapp-contacto");
+    const whatsappInput = contactForm.querySelector("#c-whatsapp");
     const statusEl = document.getElementById("form-status");
     const submitBtn = contactForm.querySelector('button[type="submit"]');
+
+    // Toggle del campo WhatsApp según método de contacto elegido.
+    const metodosContacto = contactForm.querySelectorAll('input[name="metodo-contacto"]');
+    const syncContactoMetodo = () => {
+      const selected = contactForm.querySelector('input[name="metodo-contacto"]:checked');
+      const isWhatsapp = selected && selected.value === "whatsapp";
+      if (whatsappWrap) whatsappWrap.hidden = !isWhatsapp;
+      if (whatsappInput && !isWhatsapp) {
+        whatsappInput.value = "";
+        setInvalid(whatsappInput, false);
+      }
+    };
+    metodosContacto.forEach((r) => r.addEventListener("change", syncContactoMetodo));
+    syncContactoMetodo();
 
     contactForm.addEventListener("submit", (e) => {
       if (submitBtn.disabled) { e.preventDefault(); return; }
@@ -104,6 +120,8 @@
       const name = nameInput.value.trim().slice(0, MAX.name);
       const email = emailInput.value.trim().slice(0, MAX.email);
       const message = messageInput.value.trim().slice(0, MAX.message);
+      const selectedMethod = contactForm.querySelector('input[name="metodo-contacto"]:checked');
+      const metodo = selectedMethod ? selectedMethod.value : "correo";
 
       const errors = [];
 
@@ -118,6 +136,14 @@
       const isMessageOk = message.length >= 5 && message.length <= MAX.message;
       setInvalid(messageInput, !isMessageOk);
       if (!isMessageOk) errors.push("mensaje");
+
+      // WhatsApp solo se valida si fue el método elegido.
+      if (metodo === "whatsapp" && whatsappInput) {
+        const whatsapp = whatsappInput.value.trim().slice(0, MAX.phone);
+        const isWhatsappOk = whatsapp.length > 0 && PHONE_RE.test(whatsapp);
+        setInvalid(whatsappInput, !isWhatsappOk);
+        if (!isWhatsappOk) errors.push("WhatsApp");
+      }
 
       if (errors.length) {
         e.preventDefault();
@@ -140,6 +166,10 @@
     const nameInput = prayerForm.querySelector("#p-name");
     const requestInput = prayerForm.querySelector("#p-request");
     const counter = prayerForm.querySelector("#p-count");
+    const correoWrap = document.getElementById("campo-correo-oracion");
+    const correoInput = prayerForm.querySelector("#p-correo");
+    const whatsappWrap = document.getElementById("campo-whatsapp-oracion");
+    const whatsappInput = prayerForm.querySelector("#p-whatsapp");
     const statusEl = document.getElementById("prayer-status");
     const submitBtn = prayerForm.querySelector('button[type="submit"]');
 
@@ -154,6 +184,25 @@
     };
     requestInput.addEventListener("input", updateCounter);
     updateCounter();
+
+    // Toggle de campos de contacto según método elegido.
+    const metodosOracion = prayerForm.querySelectorAll('input[name="metodo-contacto"]');
+    const syncOracionMetodo = () => {
+      const selected = prayerForm.querySelector('input[name="metodo-contacto"]:checked');
+      const v = selected ? selected.value : "ninguno";
+      if (correoWrap) correoWrap.hidden = v !== "correo";
+      if (whatsappWrap) whatsappWrap.hidden = v !== "whatsapp";
+      if (correoInput && v !== "correo") {
+        correoInput.value = "";
+        setInvalid(correoInput, false);
+      }
+      if (whatsappInput && v !== "whatsapp") {
+        whatsappInput.value = "";
+        setInvalid(whatsappInput, false);
+      }
+    };
+    metodosOracion.forEach((r) => r.addEventListener("change", syncOracionMetodo));
+    syncOracionMetodo();
 
     prayerForm.addEventListener("submit", (e) => {
       if (submitBtn.disabled) { e.preventDefault(); return; }
@@ -170,6 +219,8 @@
 
       const rawName = (nameInput.value || "").trim().slice(0, PRAYER_MAX.name);
       const request = (requestInput.value || "").trim().slice(0, PRAYER_MAX.request);
+      const selectedMethod = prayerForm.querySelector('input[name="metodo-contacto"]:checked');
+      const metodo = selectedMethod ? selectedMethod.value : "ninguno";
 
       const errors = [];
 
@@ -181,6 +232,20 @@
       const isNameOk = rawName.length <= PRAYER_MAX.name;
       setInvalid(nameInput, !isNameOk);
       if (!isNameOk) errors.push("nombre");
+
+      // Validación condicional según método de contacto.
+      if (metodo === "correo" && correoInput) {
+        const correo = correoInput.value.trim().slice(0, MAX.email);
+        const isCorreoOk = correo.length > 0 && EMAIL_RE.test(correo);
+        setInvalid(correoInput, !isCorreoOk);
+        if (!isCorreoOk) errors.push("correo");
+      }
+      if (metodo === "whatsapp" && whatsappInput) {
+        const whatsapp = whatsappInput.value.trim().slice(0, MAX.phone);
+        const isWhatsappOk = whatsapp.length > 0 && PHONE_RE.test(whatsapp);
+        setInvalid(whatsappInput, !isWhatsappOk);
+        if (!isWhatsappOk) errors.push("WhatsApp");
+      }
 
       if (errors.length) {
         e.preventDefault();

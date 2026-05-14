@@ -103,6 +103,35 @@
             <input type="checkbox" id="p-anonymous" name="anonymous">
             <span data-i18n="prayer.anonymous">Prefiero mantenerlo anónimo</span>
           </label>
+
+          <fieldset class="contacto-metodo">
+            <legend data-i18n="oracion.contacto.titulo">¿Cómo prefieres que te contactemos?</legend>
+            <label class="radio-label">
+              <input type="radio" name="metodo-contacto" value="ninguno" checked>
+              <span data-i18n="oracion.contacto.ninguno">No necesito respuesta</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="metodo-contacto" value="correo">
+              <span data-i18n="oracion.contacto.correo">Por correo electrónico</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="metodo-contacto" value="whatsapp">
+              <span data-i18n="oracion.contacto.whatsapp">Por WhatsApp</span>
+            </label>
+          </fieldset>
+
+          <div class="form-row" id="campo-correo-oracion" hidden>
+            <label for="p-correo" data-i18n="oracion.contacto.correo_label">Tu correo electrónico</label>
+            <input type="email" id="p-correo" name="correo-contacto" placeholder="tu@correo.com" maxlength="120" autocomplete="email">
+          </div>
+
+          <div class="form-row" id="campo-whatsapp-oracion" hidden>
+            <label for="p-whatsapp" data-i18n="oracion.contacto.whatsapp_label">Tu número de WhatsApp</label>
+            <input type="tel" id="p-whatsapp" name="whatsapp-contacto" placeholder="809-000-0000" maxlength="20" autocomplete="tel">
+          </div>
+
+          <p class="privacidad-nota" data-i18n="oracion.contacto.privacidad">Tu información de contacto solo será usada para responder a tu petición.</p>
+
           <button type="submit" class="btn btn-primary btn-block" data-i18n="prayer.send">Enviar petición</button>
           <p class="form-note" data-i18n="prayer.note">Tu petición llega solo al pastor. No se publica en el sitio.</p>
           <p class="form-status" id="prayer-status" role="status" aria-live="polite"></p>

@@ -191,6 +191,20 @@
       "contact.send": "Enviar mensaje",
       "contact.note": "Tus datos se usarán solo para responder tu solicitud.",
 
+      "contacto.metodo.titulo": "¿Cómo prefieres que te contactemos?",
+      "contacto.metodo.correo": "Por correo electrónico",
+      "contacto.metodo.whatsapp": "Por WhatsApp",
+      "contacto.whatsapp.label": "Tu número de WhatsApp",
+      "contacto.privacidad": "Tu información es confidencial y solo será usada para responderte.",
+
+      "oracion.contacto.titulo": "¿Cómo prefieres que te contactemos?",
+      "oracion.contacto.ninguno": "No necesito respuesta",
+      "oracion.contacto.correo": "Por correo electrónico",
+      "oracion.contacto.whatsapp": "Por WhatsApp",
+      "oracion.contacto.correo_label": "Tu correo electrónico",
+      "oracion.contacto.whatsapp_label": "Tu número de WhatsApp",
+      "oracion.contacto.privacidad": "Tu información de contacto solo será usada para responder a tu petición.",
+
       "footer.tagline": "Comunidad cristiana no denominacional",
       "footer.nav_title": "Navegación",
       "footer.social_title": "Síguenos",
@@ -380,6 +394,20 @@
       "contact.message": "Message",
       "contact.send": "Send message",
       "contact.note": "Your data will only be used to respond to your request.",
+
+      "contacto.metodo.titulo": "How would you like us to contact you?",
+      "contacto.metodo.correo": "By email",
+      "contacto.metodo.whatsapp": "By WhatsApp",
+      "contacto.whatsapp.label": "Your WhatsApp number",
+      "contacto.privacidad": "Your information is confidential and will only be used to reply to you.",
+
+      "oracion.contacto.titulo": "How would you like us to contact you?",
+      "oracion.contacto.ninguno": "I don't need a response",
+      "oracion.contacto.correo": "By email",
+      "oracion.contacto.whatsapp": "By WhatsApp",
+      "oracion.contacto.correo_label": "Your email",
+      "oracion.contacto.whatsapp_label": "Your WhatsApp number",
+      "oracion.contacto.privacidad": "Your contact information will only be used to respond to your request.",
 
       "footer.tagline": "Non-denominational Christian community",
       "footer.nav_title": "Navigation",

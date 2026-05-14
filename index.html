@@ -194,6 +194,26 @@
             <label for="c-message" data-i18n="contact.message">Mensaje</label>
             <textarea id="c-message" name="message" rows="5" maxlength="1000" required></textarea>
           </div>
+
+          <fieldset class="contacto-metodo">
+            <legend data-i18n="contacto.metodo.titulo">¿Cómo prefieres que te contactemos?</legend>
+            <label class="radio-label">
+              <input type="radio" name="metodo-contacto" value="correo" checked>
+              <span data-i18n="contacto.metodo.correo">Por correo electrónico</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="metodo-contacto" value="whatsapp">
+              <span data-i18n="contacto.metodo.whatsapp">Por WhatsApp</span>
+            </label>
+          </fieldset>
+
+          <div class="form-row" id="campo-whatsapp-contacto" hidden>
+            <label for="c-whatsapp" data-i18n="contacto.whatsapp.label">Tu número de WhatsApp</label>
+            <input type="tel" id="c-whatsapp" name="whatsapp" placeholder="809-000-0000" maxlength="20" autocomplete="tel">
+          </div>
+
+          <p class="privacidad-nota" data-i18n="contacto.privacidad">Tu información es confidencial y solo será usada para responderte.</p>
+
           <button type="submit" class="btn btn-primary btn-block" data-i18n="contact.send">Enviar mensaje</button>
           <p class="form-note" data-i18n="contact.note">Tus datos se usarán solo para responder tu solicitud.</p>
           <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
