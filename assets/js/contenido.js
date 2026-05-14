@@ -29,6 +29,62 @@
   const BRANCH = "claude/church-website-builder-LTHxX";
   const API = `https://api.github.com/repos/${REPO}/contents/data`;
 
+  // Timeout duro para cada fetch — evita que un endpoint colgado
+  // bloquee la render de la página. 8 s es generoso para móvil 3G.
+  const FETCH_TIMEOUT_MS = 8000;
+  function fetchWithTimeout(url, opts) {
+    opts = opts || {};
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    const merged = Object.assign({}, opts, { signal: controller.signal });
+    return fetch(url, merged).finally(() => clearTimeout(timer));
+  }
+
+  // Caps de longitud para texto renderizado desde JSON externo. Aunque
+  // todo se inyecta vía textContent (no es vector XSS), un campo de
+  // varios MB rompería la UI. Aplicar slice defensivo en cada render.
+  const TEXT_CAPS = {
+    nombre: 100,
+    fecha: 60,
+    referencia: 80,
+    versiculo: 600,
+    reflexion: 800,
+    titulo: 120,
+    descripcion: 600,
+    necesidad: 500
+  };
+  const cap = (s, max) => String(s == null ? "" : s).slice(0, max);
+
+  const TIPOS_ANUNCIO_VALIDOS = ["semanal", "mensual", "evento"];
+
+  // Validadores defensivos por colección. Un item que no pase queda
+  // descartado (no renderizado) — protege contra JSON con tipos
+  // inesperados o estructura corrupta.
+  function esCumpleanoValido(item) {
+    return item && typeof item === "object" &&
+      typeof item.nombre === "string" && item.nombre.length > 0 &&
+      item.nombre.length <= TEXT_CAPS.nombre;
+  }
+  function esOracionValida(item) {
+    return item && typeof item === "object" &&
+      typeof item.necesidad_es === "string" &&
+      item.necesidad_es.length > 0 &&
+      item.necesidad_es.length <= TEXT_CAPS.necesidad;
+  }
+  function esLecturaValida(item) {
+    return item && typeof item === "object" &&
+      typeof item.versiculo_es === "string" &&
+      item.versiculo_es.length > 0 &&
+      item.versiculo_es.length <= TEXT_CAPS.versiculo;
+  }
+  function esAnuncioValido(item) {
+    return item && typeof item === "object" &&
+      typeof item.titulo_es === "string" &&
+      item.titulo_es.length > 0 &&
+      item.titulo_es.length <= TEXT_CAPS.titulo &&
+      (item.tipo === undefined || TIPOS_ANUNCIO_VALIDOS.includes(item.tipo));
+  }
+
   const COLORES_BADGE = {
     evento: "#9E1B32",
     semanal: "#1B5E9E",
@@ -61,12 +117,22 @@
 
   // Normaliza ruta de imagen: vacío → null; http(s) → tal cual;
   // empieza con "/" → tal cual; si no → prepend "/".
+  // Esquemas peligrosos que el browser no ejecuta en img.src pero que sí
+  // pueden ejecutarse si la misma cadena se reutiliza en un href de <a>.
+  // Bloqueamos defensivamente cualquier scheme con ":" antes de "/".
+  const SCHEMES_SAFE = /^https?:\/\//i;
   function resolverFoto(foto) {
     if (foto === undefined || foto === null) return null;
     const v = String(foto).trim();
     if (v === "") return null;
-    if (v.startsWith("http://") || v.startsWith("https://")) return v;
-    if (v.startsWith("/")) return v;
+    // Bloqueo defensivo: rechaza javascript:, data:, vbscript:, file:, etc.
+    // Solo http(s) absoluto o rutas que arranquen con "/" o nombre simple.
+    if (SCHEMES_SAFE.test(v)) return v;
+    if (v.startsWith("/") && !v.startsWith("//")) return v;
+    // Si contiene ":" antes de la primera "/" es un scheme no permitido.
+    const colon = v.indexOf(":");
+    const slash = v.indexOf("/");
+    if (colon !== -1 && (slash === -1 || colon < slash)) return null;
     return "/" + v;
   }
 
@@ -90,7 +156,7 @@
   async function listarArchivos(carpeta, intento) {
     intento = intento || 0;
     try {
-      const res = await fetch(`${API}/${carpeta}?ref=${BRANCH}`, {
+      const res = await fetchWithTimeout(`${API}/${carpeta}?ref=${BRANCH}`, {
         headers: { Accept: "application/vnd.github+json" }
       });
       // Reintento defensivo en errores 5xx transitorios (no en 403 de
@@ -195,7 +261,7 @@
 
     // a) path relativo
     try {
-      const res = await fetch(relativo, { cache: "no-cache" });
+      const res = await fetchWithTimeout(relativo, { cache: "no-cache" });
       if (res.ok) {
         const data = await res.json();
         if (data && typeof data === "object") {
@@ -212,7 +278,7 @@
     // b) /path absoluto
     const absoluto = "/" + relativo;
     try {
-      const res = await fetch(absoluto, { cache: "no-cache" });
+      const res = await fetchWithTimeout(absoluto, { cache: "no-cache" });
       if (res.ok) {
         const data = await res.json();
         if (data && typeof data === "object") {
@@ -230,7 +296,7 @@
     if (source.api_url) {
       try {
         const sep = source.api_url.includes("?") ? "&" : "?";
-        const res = await fetch(`${source.api_url}${sep}ref=${BRANCH}`, {
+        const res = await fetchWithTimeout(`${source.api_url}${sep}ref=${BRANCH}`, {
           headers: { Accept: "application/vnd.github+json" },
           cache: "no-cache"
         });
@@ -257,7 +323,7 @@
     // d) raw.githubusercontent.com (puede fallar por cert SSL en algunas redes)
     if (source.download_url) {
       try {
-        const res = await fetch(source.download_url, { cache: "no-cache" });
+        const res = await fetchWithTimeout(source.download_url, { cache: "no-cache" });
         if (res.ok) {
           const data = await res.json();
           if (data && typeof data === "object") {
@@ -331,7 +397,9 @@
     }
 
     const filtrados = res.docs.filter((item) =>
-      item && item.activo !== false && parseInt(item.mes, 10) === mesActual
+      esCumpleanoValido(item) &&
+      item.activo !== false &&
+      parseInt(item.mes, 10) === mesActual
     );
 
     if (filtrados.length === 0) {
@@ -355,7 +423,7 @@
       if (rutaFoto) {
         const img = document.createElement("img");
         img.src = rutaFoto;
-        img.alt = item.nombre || "";
+        img.alt = cap(item.nombre, TEXT_CAPS.nombre);
         img.className = "cumpleanos-foto";
         img.loading = "lazy";
         img.onerror = function () {
@@ -376,12 +444,12 @@
 
       const nombre = document.createElement("p");
       nombre.className = "cumpleanos-nombre";
-      nombre.textContent = item.nombre || "";
+      nombre.textContent = cap(item.nombre, TEXT_CAPS.nombre);
       card.appendChild(nombre);
 
       const fecha = document.createElement("p");
       fecha.className = "cumpleanos-fecha";
-      fecha.textContent = item.fecha || "";
+      fecha.textContent = cap(item.fecha, TEXT_CAPS.fecha);
       card.appendChild(fecha);
 
       grid.appendChild(card);
@@ -398,7 +466,9 @@
 
     const res = await loadCarpeta("oracion");
     if (!res.ok) { ocultarSeccion(el); return; }
-    const activos = res.docs.filter((item) => item && item.activo !== false);
+    const activos = res.docs.filter((item) =>
+      esOracionValida(item) && item.activo !== false
+    );
 
     if (activos.length === 0) {
       ocultarSeccion(el);
@@ -410,7 +480,7 @@
     lista.className = "oracion-lista";
     activos.forEach((item) => {
       const li = document.createElement("li");
-      li.textContent = texto(item, "necesidad");
+      li.textContent = cap(texto(item, "necesidad"), TEXT_CAPS.necesidad);
       lista.appendChild(li);
     });
     el.appendChild(lista);
@@ -424,7 +494,9 @@
 
     const res = await loadCarpeta("lectura");
     if (!res.ok) { ocultarSeccion(el); return; }
-    const activo = res.docs.find((item) => item && item.activo !== false);
+    const activo = res.docs.find((item) =>
+      esLecturaValida(item) && item.activo !== false
+    );
 
     if (!activo) {
       ocultarSeccion(el);
@@ -434,13 +506,13 @@
 
     const versiculo = document.createElement("blockquote");
     versiculo.className = "lectura-versiculo";
-    versiculo.textContent = texto(activo, "versiculo");
+    versiculo.textContent = cap(texto(activo, "versiculo"), TEXT_CAPS.versiculo);
     el.appendChild(versiculo);
 
-    if (activo.referencia) {
+    if (activo.referencia && typeof activo.referencia === "string") {
       const referencia = document.createElement("cite");
       referencia.className = "lectura-referencia";
-      referencia.textContent = activo.referencia;
+      referencia.textContent = cap(activo.referencia, TEXT_CAPS.referencia);
       el.appendChild(referencia);
     }
 
@@ -448,7 +520,7 @@
     if (refl) {
       const reflexion = document.createElement("p");
       reflexion.className = "lectura-reflexion";
-      reflexion.textContent = refl;
+      reflexion.textContent = cap(refl, TEXT_CAPS.reflexion);
       el.appendChild(reflexion);
     }
   }
@@ -462,7 +534,7 @@
     const res = await loadCarpeta("anuncios");
     if (!res.ok) { ocultarSeccion(el); return; }
     const activos = res.docs
-      .filter((item) => item && item.activo !== false)
+      .filter((item) => esAnuncioValido(item) && item.activo !== false)
       .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")));
 
     if (activos.length === 0) {
@@ -487,12 +559,12 @@
 
       const titulo = document.createElement("h3");
       titulo.className = "anuncio-titulo";
-      titulo.textContent = texto(item, "titulo");
+      titulo.textContent = cap(texto(item, "titulo"), TEXT_CAPS.titulo);
       card.appendChild(titulo);
 
       const desc = document.createElement("p");
       desc.className = "anuncio-desc";
-      desc.textContent = texto(item, "descripcion");
+      desc.textContent = cap(texto(item, "descripcion"), TEXT_CAPS.descripcion);
       card.appendChild(desc);
 
       grid.appendChild(card);
