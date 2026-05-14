@@ -1562,6 +1562,7 @@ p { margin: 0 0 1em; }
   .site-nav {
     position: fixed;
     inset: var(--header-height) 0 0 0;
+    z-index: 70;
     background: var(--color-white);
     transform: translateX(100%);
     transition: transform 300ms ease;
