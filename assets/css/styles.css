@@ -176,14 +176,22 @@ p { margin: 0 0 1em; }
 }
 
 /* -------- 4. Header y navegación -------- */
+/* NOTA: backdrop-filter se aplica SOLO en desktop. En mobile el .site-nav
+   usa position: fixed y backdrop-filter en el ancestro lo atraparía como
+   containing block (CSS Filter Effects §2), rompiendo inset/z-index. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 50;
   background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--color-border);
+}
+
+@media (min-width: 961px) {
+  .site-header {
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+  }
 }
 
 .header-inner {
@@ -1568,7 +1576,8 @@ p { margin: 0 0 1em; }
     padding: 2rem clamp(1rem, 4vw, 2rem);
     border-top: 1px solid var(--color-border);
     overflow-y: auto;
-    z-index: 70;
+    z-index: 100;
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
   }
   .site-nav.is-open { transform: translateX(0); }
   .site-nav .nav-list {
