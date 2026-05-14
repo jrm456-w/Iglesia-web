@@ -11,10 +11,13 @@ Netlify desde la rama `claude/church-website-builder-LTHxX`.
 ## Páginas
 
 ```
-index.html        Hero · Horarios · Ministerios resumen · Cumpleaños del mes · Contacto rápido
+index.html        Hero · Horarios · Versículo · Oración · Anuncios · Ministerios · Contacto
+nosotros.html     Misión, Identidad, Historia, Ubicación
 ministerios.html  Todos los ministerios con detalle
 lideres.html      Equipo pastoral con fotos + Historia
+cumpleanos.html   Cumpleaños del mes (driven por CMS)
 oracion.html      Formulario de petición + Necesidades de la semana
+gracias.html      Página de confirmación tras envío de formulario
 admin/            Panel de Netlify CMS
 ```
 
@@ -69,6 +72,34 @@ aunque el panel siga guardando los archivos.
 
 ---
 
+## Configuración de correo para formularios
+
+Los formularios de **contacto** (`index.html`) y **oración**
+(`oracion.html`) usan **Netlify Forms** — el envío ocurre en el
+servidor de Netlify, sin exponer ningún correo en el HTML. Tras un
+envío exitoso el visitante es redirigido a `/gracias.html`.
+
+Después del primer deploy con los formularios activos:
+
+1. Entrar a `app.netlify.com` → tu sitio
+2. **Forms → Form notifications**
+3. **Add notification → Email notification**
+4. **Email to notify:** `rm0865806@gmail.com` *(correo temporal de prueba)*
+5. Repetir para cada formulario detectado:
+   - `contacto`
+   - `oracion`
+
+Para cambiar el correo destino en el futuro basta con actualizar
+la notificación en Netlify — **no requiere tocar el código**.
+
+### Cómo verificar que Netlify detectó los forms
+En Netlify → **Forms** debe aparecer la lista con `contacto` y
+`oracion` tras el primer deploy posterior a este cambio. Si no
+aparecen, revisar que el HTML deployado contenga `data-netlify="true"`
+y el input oculto `<input type="hidden" name="form-name" value="...">`.
+
+---
+
 ## Editar contenido sin el panel
 
 - Textos de la web → `assets/js/i18n.js` (claves ES + EN).
@@ -94,9 +125,9 @@ Abre <http://localhost:8080>.
 ## Antes de producción pública
 
 - Quitar `<meta name="robots" content="noindex, nofollow">` de las
-  4 páginas para permitir indexado.
-- Considerar mover `mailto:` a Formspree o Netlify Forms para no
-  exponer el correo de la iglesia.
+  páginas para permitir indexado.
+- Activar las notificaciones por correo en Netlify Forms (ver
+  sección *Configuración de correo para formularios* arriba).
 - Añadir un archivo `_headers` en la raíz para reforzar a nivel HTTP:
   ```
   /*

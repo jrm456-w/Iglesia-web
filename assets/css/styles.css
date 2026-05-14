@@ -1205,6 +1205,15 @@ p { margin: 0 0 1em; }
   line-height: 1.6;
 }
 
+/* gracias.html */
+.thanks-page { min-height: 60vh; display: flex; align-items: center; }
+.thanks-icon {
+  font-size: clamp(3.5rem, 8vw, 5rem);
+  line-height: 1;
+  margin: 0 0 1rem;
+}
+.thanks-cta { margin: 2rem 0 0; }
+
 .page-verse {
   font-family: var(--font-serif);
   font-size: 1.15rem;

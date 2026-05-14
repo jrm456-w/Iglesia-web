@@ -6,7 +6,7 @@
   <meta name="description" content="Iglesia De Cristo Gazcue — comunidad cristiana no denominacional en Santo Domingo. Cultos presenciales y por Zoom.">
   <meta name="theme-color" content="#9E1B32">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.google.com; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; form-action 'self' mailto:; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.google.com; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
   <meta name="robots" content="noindex, nofollow">
 
   <meta property="og:title" content="Iglesia De Cristo Gazcue">
@@ -42,6 +42,7 @@
           <li><a href="lideres.html" data-i18n="nav.leaders">Líderes</a></li>
           <li><a href="cumpleanos.html" data-i18n="nav.birthdays">Cumpleaños</a></li>
           <li><a href="oracion.html" data-i18n="nav.prayer">Oración</a></li>
+          <li><a href="#anuncios" data-i18n="nav.announcements">Anuncios</a></li>
           <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
         </ul>
       </nav>
@@ -122,7 +123,18 @@
       </div>
     </section>
 
-    <section class="section section-ministries bg-cream" id="ministerios">
+    <section class="section section-announcements bg-cream" id="anuncios" aria-labelledby="anuncios-titulo">
+      <div class="container">
+        <header class="section-head">
+          <p class="section-eyebrow" data-i18n="announcements.eyebrow">Anuncios</p>
+          <h2 class="section-title" id="anuncios-titulo" data-i18n="announcements.title">Anuncios y eventos</h2>
+          <p class="section-lead" data-i18n="announcements.subtitle">Mantente al día con lo que ocurre en nuestra comunidad</p>
+        </header>
+        <div id="seccion-anuncios"></div>
+      </div>
+    </section>
+
+    <section class="section section-ministries" id="ministerios">
       <div class="container">
         <header class="section-head">
           <p class="section-eyebrow" data-i18n="ministries.eyebrow">Ministerios</p>
@@ -158,7 +170,14 @@
           <h2 class="section-title" data-i18n="contact.title">¿Quieres conocernos?</h2>
           <p class="section-lead" data-i18n="contact.lead">Solo deja un mensaje y te responderemos.</p>
         </header>
-        <form class="contact-form" id="contact-form" novalidate>
+        <form class="contact-form" id="contact-form"
+              name="contacto"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="website"
+              action="/gracias.html"
+              novalidate>
+          <input type="hidden" name="form-name" value="contacto">
           <div class="hp" aria-hidden="true">
             <label for="c-website">No completar</label>
             <input type="text" id="c-website" name="website" tabindex="-1" autocomplete="off">
@@ -201,6 +220,7 @@
           <li><a href="lideres.html" data-i18n="nav.leaders">Líderes</a></li>
           <li><a href="cumpleanos.html" data-i18n="nav.birthdays">Cumpleaños</a></li>
           <li><a href="oracion.html" data-i18n="nav.prayer">Oración</a></li>
+          <li><a href="index.html#anuncios" data-i18n="nav.announcements">Anuncios</a></li>
           <li><a href="index.html#contacto" data-i18n="nav.contact">Contacto</a></li>
         </ul>
       </nav>

@@ -39,6 +39,7 @@
 
       "announcements.eyebrow": "Anuncios",
       "announcements.title": "Anuncios y eventos",
+      "announcements.subtitle": "Mantente al día con lo que ocurre en nuestra comunidad",
       "announcements.loading": "Cargando…",
 
       "prayer.eyebrow": "Oración",
@@ -192,7 +193,11 @@
 
       "footer.tagline": "Comunidad cristiana no denominacional",
       "footer.nav_title": "Navegación",
-      "footer.social_title": "Síguenos"
+      "footer.social_title": "Síguenos",
+
+      "thanks.title": "¡Mensaje recibido!",
+      "thanks.lead": "Gracias por escribirnos. Te responderemos pronto.",
+      "thanks.back": "Volver al inicio"
     },
 
     en: {
@@ -224,6 +229,7 @@
 
       "announcements.eyebrow": "Announcements",
       "announcements.title": "Announcements and events",
+      "announcements.subtitle": "Stay up to date with what's happening in our community",
       "announcements.loading": "Loading…",
 
       "prayer.eyebrow": "Prayer",
@@ -377,7 +383,11 @@
 
       "footer.tagline": "Non-denominational Christian community",
       "footer.nav_title": "Navigation",
-      "footer.social_title": "Follow us"
+      "footer.social_title": "Follow us",
+
+      "thanks.title": "Message received!",
+      "thanks.lead": "Thank you for reaching out. We will get back to you soon.",
+      "thanks.back": "Back to home"
     }
   };
 
