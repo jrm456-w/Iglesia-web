@@ -105,6 +105,7 @@
         )
         .map((f) => ({
           path: f.path.trim(),
+          sha: typeof f.sha === "string" ? f.sha : null,
           apiUrl: typeof f.url === "string" ? f.url.trim() : null,
           downloadUrl: typeof f.download_url === "string" ? f.download_url.trim() : null
         }))
@@ -129,31 +130,53 @@
     }
   }
 
-  // Fetch del JSON con cuatro estrategias en orden:
-  //   1) relativo                          — same-origin Netlify
-  //   2) absoluto same-origin (/data/...)  — same-origin Netlify
-  //   3) GitHub Contents API (base64)      — funciona aunque
-  //                                          raw.gh esté bloqueado por cert SSL
-  //   4) raw.githubusercontent.com         — último recurso
-  // El primero que responda 200 gana. Útil cuando el CMS commitea pero
-  // Netlify aún no termina de deployar (caso típico de 30-60 s).
+  // Caché localStorage por SHA. El SHA cambia solo cuando cambia el
+  // contenido del archivo, así que un cache hit garantiza el contenido
+  // actual y nos ahorra una llamada a la API por archivo.
+  const FILE_CACHE_PREFIX = "idcg_file_";
+  const FILE_CACHE_TTL_MS = 7 * 86400 * 1000;
+  function fileCacheGet(sha) {
+    if (!sha) return null;
+    try {
+      const raw = localStorage.getItem(FILE_CACHE_PREFIX + sha);
+      if (!raw) return null;
+      const { ts, data } = JSON.parse(raw);
+      if (Date.now() - ts > FILE_CACHE_TTL_MS) {
+        localStorage.removeItem(FILE_CACHE_PREFIX + sha);
+        return null;
+      }
+      return data;
+    } catch { return null; }
+  }
+  function fileCacheSet(sha, data) {
+    if (!sha) return;
+    try {
+      localStorage.setItem(FILE_CACHE_PREFIX + sha, JSON.stringify({ ts: Date.now(), data }));
+    } catch { /* storage lleno: ignorar */ }
+  }
+
+  // Fetch del JSON con estrategia "API-first" para eliminar 404s ruidosos
+  // de la consola cuando Netlify aún no deployó un archivo recién creado
+  // por el CMS:
+  //   0) cache localStorage por SHA          — instantáneo si ya se vio
+  //   1) api.github.com base64               — siempre funciona aunque
+  //                                            Netlify no haya deployado;
+  //                                            no usa raw.gh (cert SSL)
+  //   2) same-origin relativo / absoluto     — backup si la API falla
+  //                                            (p. ej. rate limit)
+  //   3) raw.githubusercontent.com           — último recurso
+  // El primer paso que responda gana. Resultado: cero 404s en consola
+  // durante la ventana de deploy del CMS.
   async function fetchJSON(entry) {
     if (!entry || !entry.path) return null;
-    const relativo = entry.path.replace(/^\/+/, "");
 
-    // 1) y 2) same-origin
-    for (const url of [relativo, "/" + relativo]) {
-      try {
-        const res = await fetch(url, { cache: "no-cache" });
-        if (!res.ok) { debug("fetchJSON !ok", res.status, url); continue; }
-        const data = await res.json();
-        if (data && typeof data === "object") return data;
-      } catch (err) {
-        debug("fetchJSON error", url, err);
-      }
+    // 0) Cache local por SHA
+    if (entry.sha) {
+      const cached = fileCacheGet(entry.sha);
+      if (cached) return cached;
     }
 
-    // 3) GitHub Contents API con base64
+    // 1) GitHub Contents API con base64
     if (entry.apiUrl) {
       try {
         const sep = entry.apiUrl.includes("?") ? "&" : "?";
@@ -167,7 +190,10 @@
             const text = decodificarBase64Utf8(payload.content);
             if (text) {
               const data = JSON.parse(text);
-              if (data && typeof data === "object") return data;
+              if (data && typeof data === "object") {
+                fileCacheSet(entry.sha, data);
+                return data;
+              }
             }
           }
         } else {
@@ -178,13 +204,32 @@
       }
     }
 
-    // 4) raw.githubusercontent.com (puede fallar por cert SSL en algunas redes)
+    // 2) same-origin (relativo y absoluto)
+    const relativo = entry.path.replace(/^\/+/, "");
+    for (const url of [relativo, "/" + relativo]) {
+      try {
+        const res = await fetch(url, { cache: "no-cache" });
+        if (!res.ok) { debug("fetchJSON same-origin !ok", res.status, url); continue; }
+        const data = await res.json();
+        if (data && typeof data === "object") {
+          fileCacheSet(entry.sha, data);
+          return data;
+        }
+      } catch (err) {
+        debug("fetchJSON same-origin error", url, err);
+      }
+    }
+
+    // 3) raw.githubusercontent.com (puede fallar por cert SSL en algunas redes)
     if (entry.downloadUrl) {
       try {
         const res = await fetch(entry.downloadUrl, { cache: "no-cache" });
         if (res.ok) {
           const data = await res.json();
-          if (data && typeof data === "object") return data;
+          if (data && typeof data === "object") {
+            fileCacheSet(entry.sha, data);
+            return data;
+          }
         } else {
           debug("fetchJSON raw !ok", res.status, entry.downloadUrl);
         }
