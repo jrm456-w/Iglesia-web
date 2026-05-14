@@ -79,12 +79,14 @@
   const debug = (...args) => { if (isLocalhost()) console.log("[contenido]", ...args); };
 
   // Lista los .json de una carpeta usando la GitHub Contents API.
-  // Devuelve metadata con path local (relativo y absoluto same-origin)
-  // y fallback remoto (download_url). Aplica trim() defensivo por si la
-  // API devuelve whitespace.
-  // Caso de uso del fallback: si GitHub ya tiene un archivo nuevo pero
-  // Netlify aún no termina de desplegarlo, el fetch local responde 404 y
-  // se intenta download_url para evitar "huecos" de contenido.
+  // Devuelve metadata para tres rutas posibles de fetch:
+  //   · path        — local same-origin (Netlify); más rápido cuando ya
+  //                   está deployado.
+  //   · apiUrl      — URL de la GitHub Contents API para ese archivo;
+  //                   devuelve el contenido en base64 dentro de un
+  //                   JSON. Funciona en redes que bloquean raw.gh.
+  //   · downloadUrl — raw.githubusercontent.com; último recurso.
+  // Aplica trim() defensivo por si la API devuelve whitespace.
   async function listarArchivos(carpeta) {
     try {
       const res = await fetch(`${API}/${carpeta}?ref=${BRANCH}`, {
@@ -103,6 +105,7 @@
         )
         .map((f) => ({
           path: f.path.trim(),
+          apiUrl: typeof f.url === "string" ? f.url.trim() : null,
           downloadUrl: typeof f.download_url === "string" ? f.download_url.trim() : null
         }))
         .filter((e) => e.path);
@@ -112,23 +115,34 @@
     }
   }
 
-  // Fetch del JSON con estrategia de fallback explícita:
-  //   1) relativo (data/oracion/x.json)        — resuelto contra el doc
-  //   2) absoluto same-origin (/data/...)      — fallback si la base URL
-  //                                              relativa no aplica
-  //   3) remoto download_url (raw.github)      — última red de seguridad
-  // El primero que responda 200 gana. Errores se silencian a la consola
-  // (solo se loguean en localhost).
+  // Decodifica el contenido base64 de la GitHub Contents API
+  // respetando UTF-8 (atob solo devuelve binary string).
+  function decodificarBase64Utf8(b64) {
+    try {
+      const limpio = b64.replace(/\s/g, "");
+      const binStr = atob(limpio);
+      const bytes = new Uint8Array(binStr.length);
+      for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+      return new TextDecoder("utf-8").decode(bytes);
+    } catch {
+      return null;
+    }
+  }
+
+  // Fetch del JSON con cuatro estrategias en orden:
+  //   1) relativo                          — same-origin Netlify
+  //   2) absoluto same-origin (/data/...)  — same-origin Netlify
+  //   3) GitHub Contents API (base64)      — funciona aunque
+  //                                          raw.gh esté bloqueado por cert SSL
+  //   4) raw.githubusercontent.com         — último recurso
+  // El primero que responda 200 gana. Útil cuando el CMS commitea pero
+  // Netlify aún no termina de deployar (caso típico de 30-60 s).
   async function fetchJSON(entry) {
     if (!entry || !entry.path) return null;
     const relativo = entry.path.replace(/^\/+/, "");
-    const candidatos = [
-      relativo,                 // relativo
-      "/" + relativo,           // absoluto same-origin
-    ];
-    if (entry.downloadUrl) candidatos.push(entry.downloadUrl); // remoto
 
-    for (const url of candidatos) {
+    // 1) y 2) same-origin
+    for (const url of [relativo, "/" + relativo]) {
       try {
         const res = await fetch(url, { cache: "no-cache" });
         if (!res.ok) { debug("fetchJSON !ok", res.status, url); continue; }
@@ -138,6 +152,47 @@
         debug("fetchJSON error", url, err);
       }
     }
+
+    // 3) GitHub Contents API con base64
+    if (entry.apiUrl) {
+      try {
+        const sep = entry.apiUrl.includes("?") ? "&" : "?";
+        const res = await fetch(`${entry.apiUrl}${sep}ref=${BRANCH}`, {
+          headers: { Accept: "application/vnd.github+json" },
+          cache: "no-cache"
+        });
+        if (res.ok) {
+          const payload = await res.json();
+          if (payload && typeof payload.content === "string") {
+            const text = decodificarBase64Utf8(payload.content);
+            if (text) {
+              const data = JSON.parse(text);
+              if (data && typeof data === "object") return data;
+            }
+          }
+        } else {
+          debug("fetchJSON api !ok", res.status, entry.apiUrl);
+        }
+      } catch (err) {
+        debug("fetchJSON api error", entry.apiUrl, err);
+      }
+    }
+
+    // 4) raw.githubusercontent.com (puede fallar por cert SSL en algunas redes)
+    if (entry.downloadUrl) {
+      try {
+        const res = await fetch(entry.downloadUrl, { cache: "no-cache" });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === "object") return data;
+        } else {
+          debug("fetchJSON raw !ok", res.status, entry.downloadUrl);
+        }
+      } catch (err) {
+        debug("fetchJSON raw error", entry.downloadUrl, err);
+      }
+    }
+
     debug("fetchJSON ALL failed", entry.path);
     return null;
   }
