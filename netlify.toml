@@ -1,0 +1,20 @@
+# netlify.toml — configuración de build/deploy
+# Doc: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  publish = "."
+
+# Cancelar build cuando el ÚNICO cambio es contenido editado por el
+# panel CMS (data/) o imágenes subidas (assets/img/uploads/). El sitio
+# lee data/ directamente desde la GitHub Contents API en runtime —
+# no necesita redeploy para mostrar contenido fresco. Esto ahorra
+# créditos de build y elimina el delay de ~30 s tras cada edición.
+#
+# Cómo funciona: Netlify ejecuta el comando "ignore" antes de buildear.
+# Si retorna 0 (sin diff fuera de las rutas excluidas), Netlify SALTA
+# el build. Si retorna ≠ 0, buildea normal.
+#
+# Cambios en HTML/CSS/JS/admin/config.yml/netlify.toml/_headers
+# disparan deploy normal.
+[context.production]
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)data/**' ':(exclude)assets/img/uploads/**'"

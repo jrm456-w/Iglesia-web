@@ -157,7 +157,8 @@
     intento = intento || 0;
     try {
       const res = await fetchWithTimeout(`${API}/${carpeta}?ref=${BRANCH}`, {
-        headers: { Accept: "application/vnd.github+json" }
+        headers: { Accept: "application/vnd.github+json" },
+        cache: "no-store"
       });
       // Reintento defensivo en errores 5xx transitorios (no en 403 de
       // rate limit, que no se cura esperando 2s).
@@ -261,7 +262,7 @@
 
     // a) path relativo
     try {
-      const res = await fetchWithTimeout(relativo, { cache: "no-cache" });
+      const res = await fetchWithTimeout(relativo, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         if (data && typeof data === "object") {
@@ -278,7 +279,7 @@
     // b) /path absoluto
     const absoluto = "/" + relativo;
     try {
-      const res = await fetchWithTimeout(absoluto, { cache: "no-cache" });
+      const res = await fetchWithTimeout(absoluto, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         if (data && typeof data === "object") {
@@ -298,7 +299,7 @@
         const sep = source.api_url.includes("?") ? "&" : "?";
         const res = await fetchWithTimeout(`${source.api_url}${sep}ref=${BRANCH}`, {
           headers: { Accept: "application/vnd.github+json" },
-          cache: "no-cache"
+          cache: "no-store"
         });
         if (res.ok) {
           const payload = await res.json();
@@ -323,7 +324,7 @@
     // d) raw.githubusercontent.com (puede fallar por cert SSL en algunas redes)
     if (source.download_url) {
       try {
-        const res = await fetchWithTimeout(source.download_url, { cache: "no-cache" });
+        const res = await fetchWithTimeout(source.download_url, { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
           if (data && typeof data === "object") {
